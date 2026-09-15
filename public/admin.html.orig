@@ -326,7 +326,7 @@ const I18N = {
     // 登录
     loginSubtitle: '管理后台 · 请输入管理密钥登录', keyPlaceholder: '管理密钥 (admin)',
     // 标签
-    tabOverview: '概览', tabFiles: '文件', tabShares: '分享', tabDirect: '直链', tabLogs: '记录', tabBans: '封禁', tabGlobal: '全球分布', tabSecurity: '安全', tabSettings: '设置',
+    tabOverview: '概览', tabFiles: '文件', tabShares: '分享', tabLogs: '记录', tabBans: '封禁', tabGlobal: '全球分布', tabSecurity: '安全', tabSettings: '设置',
     // 概览
     statTraffic: '本月流量', usedPercent: '已用 {n}% · 跨月自动重置', noLimit: '未设置限额',
     statDownloads: '累计下载', todayN: '今日 {n} 次', statFiles: '文件总数', storedR2: '存储于 R2 对象存储',
@@ -343,7 +343,7 @@ const I18N = {
     // 文件
     dropTitle: '拖拽文件到此处，或点击上传',
     dropDesc: '单文件最大 100 MB（Workers 请求限制）· 直传 R2 对象存储',
-    allFiles: '全部文件', noFiles: '还没有文件，上传一个试试', createShare: '创建分享', createDirect: '创建直链', del: '删除',
+    allFiles: '全部文件', noFiles: '还没有文件，上传一个试试', createShare: '创建分享', del: '删除',
     tooLarge: '「{name}」超过 100 MB 限制', uploadOk: '「{name}」上传成功', uploadFail: '「{name}」上传失败',
     uploadDone: '完成 ✅', uploadFailShort: '失败',
     // 分享弹窗
@@ -357,7 +357,7 @@ const I18N = {
     maxTip: '达到上限后链接自动失效。单 IP 重复下载限制由「设置」统一控制。',
     generate: '生成链接', shareCreated: '分享链接已创建 ✨', shareCreatedSub: '复制下面的链接发给需要的人',
     sharePageLink: '分享页（访客先看到密码/验证页）',
-    directModalTitle: '创建直链', directModalSub: '生成一个拿了就能下的直链，无密码无界面',
+    directLinkLabel: '直链（/d/xxx，跳过分享页直接下载）',
     preview: '预览分享页',
     // 分享列表
     sharesTitle: '分享链接', cleanup: '清理失效分享',
@@ -365,16 +365,6 @@ const I18N = {
     revoke: '撤销', noShares: '还没有分享链接，去「文件」页创建一个',
     confirmCleanupT: '清理失效分享', confirmCleanupD: '将删除所有已过期、已撤销、已达下载上限的分享链接。',
     cleanedN: '已清理 {n} 条失效分享', shareRevoked: '分享已撤销',
-    // 直链弹窗     // 直链弹窗 shareRevoked: '分享已撤销', 列表 列表
-    directCreated: '直链已创建 ✨', directCreatedSub: '复制下面的链接直接下载',
-    directUrlLabel: '直链（/d/xxx）',
-    directModalNotes: '备注（可选）', directModalNotesPh: '给直链起个备注名方便区分',
-    directLinksTitle: '直链', cleanupDirects: '清理失效直链',
-    stDirectActive: '有效', stDirectExpired: '已过期', stDirectRevoked: '已撤销', stDirectMaxed: '已满额',
-    revokeDirect: '撤销', noDirectLinks: '还没有直链，去「文件」页创建一个',
-    confirmCleanupDirectT: '清理失效直链', confirmCleanupDirectD: '将删除所有已过期、已撤销、已达下载上限的直链。',
-    cleanedDirectN: '已清理 {n} 条失效直链', directRevoked: '直链已撤销',
-    confirmRevokeDirectT: '撤销直链', confirmRevokeDirectD: '撤销后该链接将立即失效，无法恢复。',
     confirmRevokeT: '撤销分享', confirmRevokeD: '撤销后该链接将立即失效，无法恢复。',
     // 记录
     logsTitle: '下载记录', totalN: '共 {n} 条', searchPlaceholder: '搜索 IP / 文件名…',
@@ -624,7 +614,7 @@ const I18N = {
     // 登录
     loginSubtitle: 'Admin console · Enter your admin key to continue', keyPlaceholder: 'Admin key (admin)',
     // 标签
-    tabOverview: 'Overview', tabFiles: 'Files', tabShares: 'Shares', tabDirect: 'Direct', tabLogs: 'Logs', tabBans: 'Bans', tabGlobal: 'Global', tabSecurity: 'Security', tabSettings: 'Settings',
+    tabOverview: 'Overview', tabFiles: 'Files', tabShares: 'Shares', tabLogs: 'Logs', tabBans: 'Bans', tabGlobal: 'Global', tabSecurity: 'Security', tabSettings: 'Settings',
     // 概览
     statTraffic: 'Monthly Traffic', usedPercent: '{n}% used · resets monthly', noLimit: 'No limit set',
     statDownloads: 'Total Downloads', todayN: '{n} today', statFiles: 'Files', storedR2: 'Stored in R2 object storage',
@@ -641,7 +631,7 @@ const I18N = {
     // 文件
     dropTitle: 'Drop files here or click to upload',
     dropDesc: 'Max 100 MB per file (Workers limit) · Stored directly in R2',
-    allFiles: 'All Files', noFiles: 'No files yet — upload one to get started', createShare: 'Share', createDirect: 'Direct', del: 'Delete',
+    allFiles: 'All Files', noFiles: 'No files yet — upload one to get started', createShare: 'Share', del: 'Delete',
     tooLarge: '"{name}" exceeds the 100 MB limit', uploadOk: '"{name}" uploaded', uploadFail: '"{name}" upload failed',
     uploadDone: 'Done ✅', uploadFailShort: 'Failed',
     // 分享弹窗
@@ -655,7 +645,7 @@ const I18N = {
     maxTip: 'The link expires when the cap is reached. Per-IP duplicate limits are controlled in Settings.',
     generate: 'Generate Link', shareCreated: 'Share link created ✨', shareCreatedSub: 'Copy the link below and share it',
     sharePageLink: 'Share page (visitors see password/verification first)',
-    directModalTitle: 'Create Direct Link', directModalSub: 'Generate a bare link — no page, no password, just download',
+    directLinkLabel: 'Direct link (/d/xxx — skips share page)',
     preview: 'Preview',
     // 分享列表
     sharesTitle: 'Share Links', cleanup: 'Clean up expired',
@@ -663,16 +653,6 @@ const I18N = {
     revoke: 'Revoke', noShares: 'No share links yet — create one in Files',
     confirmCleanupT: 'Clean up expired shares', confirmCleanupD: 'This will delete all expired, revoked and maxed-out share links.',
     cleanedN: 'Cleaned up {n} expired shares', shareRevoked: 'Share revoked',
-    // Direct links
-    directCreated: 'Direct link created ✨', directCreatedSub: 'Copy the link below and share it',
-    directUrlLabel: 'Direct link (/d/xxx)',
-    directModalNotes: 'Notes (optional)', directModalNotesPh: 'Label this direct link',
-    directLinksTitle: 'Direct Links', cleanupDirects: 'Clean up',
-    stDirectActive: 'Active', stDirectExpired: 'Expired', stDirectRevoked: 'Revoked', stDirectMaxed: 'Maxed',
-    revokeDirect: 'Revoke', noDirectLinks: 'No direct links yet — go to Files and create one',
-    confirmCleanupDirectT: 'Clean up expired direct links', confirmCleanupDirectD: 'Delete all expired, revoked and maxed-out direct links.',
-    cleanedDirectN: 'Cleaned {n} expired direct links', directRevoked: 'Direct link revoked',
-    confirmRevokeDirectT: 'Revoke direct link', confirmRevokeDirectD: 'This direct link will be permanently disabled.',
     confirmRevokeT: 'Revoke share', confirmRevokeD: 'The link will stop working immediately. This cannot be undone.',
     // 记录
     logsTitle: 'Download Logs', totalN: '{n} total', searchPlaceholder: 'Search IP / file name…',
@@ -1178,7 +1158,6 @@ async function showApp(){
       <button data-tab="overview" class="active">${esc(t('tabOverview'))}</button>
       <button data-tab="files">${esc(t('tabFiles'))}</button>
       <button data-tab="shares">${esc(t('tabShares'))}</button>
-      <button data-tab="direct">${esc(t('tabDirect'))}</button>
       <button data-tab="logs">${esc(t('tabLogs'))}</button>
       <button data-tab="bans">${esc(t('tabBans'))}</button>
       <button data-tab="global">${esc(t('tabGlobal'))}</button>
@@ -1200,7 +1179,7 @@ function switchTab(tab){
   $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const v = $('#view');
   v.innerHTML = '<div class="spin"></div>';
-  ({ overview: loadOverview, files: loadFiles, shares: loadShares, direct: loadDirectLinks, logs: loadLogs, bans: loadBans, global: loadGlobal, codes: loadCodes, security: loadSecurity, settings: loadSettings })[tab]().catch(e => {
+  ({ overview: loadOverview, files: loadFiles, shares: loadShares, logs: loadLogs, bans: loadBans, global: loadGlobal, codes: loadCodes, security: loadSecurity, settings: loadSettings })[tab]().catch(e => {
     v.innerHTML = `<div class="glass section"><div class="empty"><div class="icon">⚠️</div>${esc(e.message === 'unauthorized' ? t('loadingErr') : e.message)}</div></div>`;
   });
 }
@@ -1308,7 +1287,6 @@ async function loadFiles(){
             <td class="num">${fmtTime(f.uploaded_at)}</td>
             <td><div class="actions-cell">
               <button class="btn sm primary" data-share="${f.id}">${esc(t('createShare'))}</button>
-              <button class="btn sm" data-direct="${f.id}" style="background:rgba(250,204,21,0.15);border-color:rgba(250,204,21,0.35);color:#fde68a">${esc(t('createDirect'))}</button>
               <button class="btn sm danger" data-del="${f.id}" data-name="${esc(f.name)}">${esc(t('del'))}</button>
             </div></td>
           </tr>`).join('')}
@@ -1324,7 +1302,6 @@ async function loadFiles(){
   fi.onchange = () => { uploadFiles([...fi.files]); fi.value = ''; };
 
   $$('[data-share]').forEach(b => b.onclick = () => openShareModal(b.dataset.share));
-  $$('[data-direct]').forEach(b => b.onclick = () => openDirectModal(b.dataset.direct));
   $$('[data-del]').forEach(b => b.onclick = async () => {
     if(!(await confirmDialog(t('deleteFileT'), t('deleteFileD', {name: b.dataset.name})))) return;
     await api(`/api/admin/files/${b.dataset.del}`, { method:'DELETE' });
@@ -1402,6 +1379,7 @@ function openShareModal(fileId){
     try{
       const r = await api('/api/admin/shares', { method:'POST', body: JSON.stringify({ file_id: fileId, expires_hours: exp, max_downloads: max, password, download_name }) });
       const url = location.origin + r.url;
+      const directUrl = location.origin + r.direct_url;
       openModal(`
         <h3>${esc(t('shareCreated'))}</h3>
         <div class="sub">${esc(t('shareCreatedSub'))}</div>
@@ -1413,7 +1391,13 @@ function openShareModal(fileId){
               <button class="btn primary" data-copy="${esc(url)}">${esc(t('copy'))}</button>
             </div>
           </div>
-
+          <div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px">${esc(t('directLinkLabel'))}</div>
+            <div class="link-box">
+              <input readonly value="${esc(directUrl)}" onclick="this.select()">
+              <button class="btn primary" data-copy="${esc(directUrl)}">${esc(t('copy'))}</button>
+            </div>
+          </div>
         </div>
         <div class="actions">
           <button class="btn" data-x>${esc(t('close'))}</button>
@@ -1422,72 +1406,6 @@ function openShareModal(fileId){
       document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy));
       $('[data-x]').onclick = closeModal;
       $('#sh-open').onclick = () => window.open(r.url, '_blank');
-    }catch(e){ toast(e.message, 'err'); }
-  };
-}
-
-
-/* ═══════════ 创建直链弹窗 ═══════════ */
-function openDirectModal(fileId){
-  openModal(`
-    <h3>${esc(t('directModalTitle'))}</h3>
-    <div class="sub">${esc(t('directModalSub'))}</div>
-    <div class="field">
-      <label>${esc(t('validity'))}</label>
-      <select id="dl-exp" style="width:100%;padding:12px 14px;border-radius:14px;font-size:15px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
-        <option value="0" style="color:#111">${esc(t('perm'))}</option>
-        <option value="1" style="color:#111">${esc(t('h1'))}</option>
-        <option value="24" style="color:#111">${esc(t('d1'))}</option>
-        <option value="168" style="color:#111">${esc(t('d7'))}</option>
-        <option value="720" style="color:#111">${esc(t('d30'))}</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>${esc(t('maxDownloadsLabel'))}</label>
-      <input type="number" id="dl-max" min="0" placeholder="${esc(t('unlimitedPlaceholder'))}">
-      <div class="tip">${esc(t('maxTip'))}</div>
-    </div>
-    <div class="field">
-      <label>${esc(t('downloadName'))}</label>
-      <input type="text" id="dl-dlname" placeholder="${esc(t('downloadNamePh'))}">
-      <div class="tip">${esc(t('downloadNameHint'))}</div>
-    </div>
-    <div class="field">
-      <label>${esc(t('directModalNotes'))}</label>
-      <input type="text" id="dl-notes" placeholder="${esc(t('directModalNotesPh'))}">
-    </div>
-    <div class="actions">
-      <button class="btn" data-x>${esc(t('cancel'))}</button>
-      <button class="btn primary" id="dl-create">${esc(t('generate'))}</button>
-    </div>`);
-  $('[data-x]').onclick = closeModal;
-  $('#dl-create').onclick = async () => {
-    const exp = Number($('#dl-exp').value) || null;
-    const max = Number($('#dl-max').value) || null;
-    const download_name = $('#dl-dlname').value.trim() || null;
-    const notes = $('#dl-notes').value.trim() || null;
-    try{
-      const r = await api('/api/admin/direct-links', { method:'POST', body: JSON.stringify({ file_id: fileId, expires_hours: exp, max_downloads: max, download_name, notes }) });
-      const url = location.origin + r.url;
-      openModal(`
-        <h3>${esc(t('directCreated'))}</h3>
-        <div class="sub">${esc(t('directCreatedSub'))}</div>
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px">${esc(t('directUrlLabel'))}</div>
-            <div class="link-box">
-              <input readonly value="${esc(url)}" onclick="this.select()">
-              <button class="btn primary" data-copy="${esc(url)}">${esc(t('copy'))}</button>
-            </div>
-          </div>
-        </div>
-        <div class="actions">
-          <button class="btn" data-x>${esc(t('close'))}</button>
-          <button class="btn primary" id="dl-open">${esc(t('preview'))}</button>
-        </div>`);
-      document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy));
-      $('[data-x]').onclick = closeModal;
-      $('#dl-open').onclick = () => window.open(r.url, '_blank');
     }catch(e){ toast(e.message, 'err'); }
   };
 }
@@ -1508,7 +1426,7 @@ async function loadShares(){
           return `
           <tr>
             <td class="name-cell">${ficon(s.file_name)} ${esc(s.file_name)}${s.download_name && s.download_name !== s.file_name ? `<div style="font-size:11px;color:#6ee7b7;margin-top:2px">↳ ${esc(s.download_name)}</div>` : ''}</td>
-            <td class="mono">${s.has_password?'🔒 ':''}<a href="/s/${s.id}" target="_blank" style="color:#a5d8ff;text-decoration:none">/s/${s.id}</a></td>
+            <td class="mono">${s.has_password?'🔒 ':''}<a href="/s/${s.id}" target="_blank" style="color:#a5d8ff;text-decoration:none">/s/${s.id}</a><br><span style="font-size:10px;color:rgba(255,255,255,.45)">直链 </span><a href="${s.direct_url}" target="_blank" data-direct="${location.origin}${s.direct_url}" style="color:#fde68a;text-decoration:none;font-size:11px">${s.direct_url}</a><button class="btn sm" data-cdirect="${location.origin}${s.direct_url}" style="padding:1px 6px;font-size:10px;margin-left:2px">📋</button></td>
             <td class="mono">${pw ? `<span id="pw-${s.id}" style="font-family:ui-monospace,'SF Mono',monospace;color:#fde68a">••••••</span>
               <button class="btn sm" data-pw="${s.id}" data-val="${esc(pw)}" style="padding:2px 8px;font-size:11px;margin-left:4px">👁</button>
               <button class="btn sm" data-cpw="${esc(pw)}" style="padding:2px 8px;font-size:11px">📋</button>` : `<span style="color:var(--text-3)">—</span>`}</td>
@@ -1608,53 +1526,6 @@ async function loadLogs(){
     toast(t('clearedN', {n: r.deleted})); loadLogs();
   };
 }
-
-/* ═══════════ 直链 ═══════════ */
-async function loadDirectLinks(){
-  const { direct_links } = await api('/api/admin/direct-links');
-  const STATUS_KEY = { active:'stDirectActive', expired:'stDirectExpired', revoked:'stDirectRevoked', maxed:'stDirectMaxed' };
-  $('#view').innerHTML = `
-    <div class="glass section">
-      <div class="section-title"><h2>🔗 ${esc(t('directLinksTitle'))}（${direct_links.length}）</h2>
-        <button class="btn sm" id="cleanup-directs">${esc(t('cleanupDirects'))}</button></div>
-      ${direct_links.length ? `
-      <div style="overflow-x:auto"><table class="tbl">
-        <thead><tr>
-          <th>${esc(t('colFile'))}</th><th>${esc(t('colLink'))}</th>
-          <th>备注</th>
-          <th>${esc(t('colDownloads'))} / ${esc(t('colExpires'))}</th>
-          <th>${esc(t('colCreated'))}</th><th>${esc(t('colStatus'))}</th>
-          <th style="width:80px">${esc(t('colActions'))}</th>
-        </tr></thead>
-        <tbody>${direct_links.map(d => `
-          <tr>
-            <td class="name-cell">${ficon(d.file_name)} ${esc(d.file_name)}${d.download_name && d.download_name !== d.file_name ? `<div style="font-size:11px;color:#6ee7b7;margin-top:2px">↳ ${esc(d.download_name)}</div>` : ''}</td>
-            <td class="mono"><a href="/d/${d.id}" target="_blank" style="color:#fde68a;text-decoration:none">/d/${d.id}</a>
-              <button class="btn sm" data-cdl="${location.origin}/d/${d.id}" style="padding:1px 6px;font-size:10px;margin-left:4px">📋</button></td>
-            <td>${d.notes ? esc(d.notes) : '<span style="color:var(--text-3)">—</span>'}</td>
-            <td class="num">${d.download_count} / ${d.max_downloads ?? '∞'}</td>
-            <td class="num">${fmtTime(d.created_at)}</td>
-            <td><span class="tag ${d.status}"><i></i>${esc(t(STATUS_KEY[d.status]))}</span></td>
-            <td><button class="btn sm danger" data-rvdl="${d.id}">${esc(t('revokeDirect'))}</button></td>
-          </tr>`).join('')}
-        </tbody>
-      </table></div>` : `<div class="empty"><div class="icon">🔗</div>${esc(t('noDirectLinks'))}</div>`}
-    </div>`;
-  $('#cleanup-directs').onclick = async () => {
-    if(!(await confirmDialog(t('confirmCleanupDirectT'), t('confirmCleanupDirectD'), false))) return;
-    const r = await api('/api/admin/direct-links/cleanup', { method:'POST' });
-    toast(t('cleanedDirectN', {n: r.deleted}));
-    loadDirectLinks();
-  };
-  document.querySelectorAll('[data-cdl]').forEach(b => b.onclick = () => copyText(b.dataset.cdl));
-  $$('[data-rvdl]').forEach(b => b.onclick = async () => {
-    if(!(await confirmDialog(t('confirmRevokeDirectT'), t('confirmRevokeDirectD')))) return;
-    await api(`/api/admin/direct-links/${b.dataset.rvdl}`, { method:'DELETE' });
-    toast(t('directRevoked'));
-    loadDirectLinks();
-  });
-}
-
 
 /* ═══════════ 封禁 ═══════════ */
 async function loadBans(){
