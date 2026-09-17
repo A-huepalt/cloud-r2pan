@@ -230,6 +230,7 @@ export async function handleAdminApi(
       totp_enabled: s.totpEnabled,
       cloudflare_recovery: !!env.totp_recovery,
       recovery_remaining: s.totpRecoveryHash ? s.totpRecoveryHash.split(",").filter(Boolean).length : 0,
+      ui_theme: s.uiTheme,
     });
   }
 
@@ -992,6 +993,8 @@ export async function handleAdminApi(
       s3_secret_configured: !!s.s3SecretKeyCipher,
       // Analytics Engine
       analytics_engine_available: !!env.analytics,
+      // UI 主题
+      ui_theme: s.uiTheme,
     });
   }
 
@@ -1084,6 +1087,14 @@ export async function handleAdminApi(
         if (cipher) patch.s3_secret_key_cipher = cipher;
       }
       // raw === "__keep__" 或不传 → 保留原值不动
+    }
+
+    // UI 主题
+    if (typeof body.ui_theme === "string") {
+      const t = body.ui_theme;
+      if (t === "light" || t === "dark") {
+        patch.ui_theme = t;
+      }
     }
 
     await updateSettings(env, patch);

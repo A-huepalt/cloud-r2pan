@@ -1,39 +1,129 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>cloud-r2pan</title>
 <style>
 :root {
+  /* ── 亮色 Apple 风格（默认） ── */
+  --bg-page: linear-gradient(180deg, #f7f7fb 0%, #f0f1f6 100%);
+  --orb-1: #c7e9ff;
+  --orb-2: #d5c6ff;
+  --orb-3: #fbcfe8;
+  --orb-opacity: 0.18;
+
+  /* 玻璃 / 背景层 */
+  --glass: rgba(255,255,255,.72);
+  --glass-strong: rgba(255,255,255,.9);
+  --stroke: rgba(0,0,0,.08);
+  --stroke-strong: rgba(0,0,0,.16);
+
+  /* 文字 */
+  --text: #111113;
+  --text-2: rgba(0,0,0,.62);
+  --text-3: rgba(0,0,0,.38);
+
+  /* 语义层：半透明表面 */
+  --sf-soft: rgba(0,0,0,.04);
+  --sf: rgba(0,0,0,.055);
+  --sf-strong: rgba(0,0,0,.09);
+  --sf-input: rgba(0,0,0,.05);
+  --sf-input-focus: rgba(0,0,0,.08);
+
+  /* 阴影 */
+  --shadow-soft: 0 12px 36px rgba(0,0,0,.08);
+  --shadow-topbar: 0 10px 28px rgba(0,0,0,.06);
+  --shadow-inset-hi: inset 0 1px 0 rgba(255,255,255,.9);
+  --shadow-glass: 0 16px 44px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.9);
+  --shadow-topbar-box: 0 14px 36px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.9);
+  --shadow-modal: 0 -10px 40px rgba(0,0,0,.12);
+  --shadow-btn-primary: 0 8px 22px rgba(10,124,255,.25), inset 0 1px 0 rgba(255,255,255,.8);
+  --shadow-btn-danger: 0 4px 14px rgba(255,69,58,.15);
+  --shadow-spinner-track: rgba(0,0,0,.12);
+  --shadow-switch-thumb: 0 3px 8px rgba(0,0,0,.18);
+  --shadow-toast: 0 12px 32px rgba(0,0,0,.12);
+  --shadow-logo: inset 0 1px 0 rgba(255,255,255,.5), 0 6px 16px rgba(59,130,246,.4);
+
+  /* 其它 */
+  --scrollbar-thumb: rgba(0,0,0,.12);
+  --track-bg: rgba(0,0,0,.12);
+  --bar-bg: rgba(0,0,0,.1);
+  --tbl-divider: rgba(0,0,0,.06);
+  --tbl-hover: rgba(0,0,0,.04);
+  --tbl-row-border: rgba(0,0,0,.07);
+  --dashed-border: rgba(0,0,0,.22);
+  --dropzone-bg: rgba(0,0,0,.025);
+  --dropzone-hover-bg: rgba(0,0,0,.05);
+  --dashed-border-strong: rgba(0,0,0,.45);
+  --radius: 24px;
+  --blue: #0a84ff;
+}
+
+/* ── 暗色主题（data-theme="dark" 时启用） ── */
+:root[data-theme="dark"] {
+  --bg-page: linear-gradient(165deg, #0b1026 0%, #151238 42%, #26104a 100%);
+  --orb-1: #22d3ee;
+  --orb-2: #7c5cf6;
+  --orb-3: #ec4899;
+  --orb-opacity: 0.45;
+
   --glass: rgba(255,255,255,.09);
   --glass-strong: rgba(255,255,255,.14);
   --stroke: rgba(255,255,255,.16);
   --stroke-strong: rgba(255,255,255,.28);
+
   --text: #fff;
   --text-2: rgba(255,255,255,.66);
   --text-3: rgba(255,255,255,.42);
-  --blue: #0a84ff;
-  --radius: 24px;
+
+  --sf-soft: rgba(255,255,255,.05);
+  --sf: rgba(255,255,255,.07);
+  --sf-strong: rgba(255,255,255,.13);
+  --sf-input: rgba(255,255,255,.09);
+  --sf-input-focus: rgba(255,255,255,.13);
+
+  --shadow-soft: 0 16px 44px rgba(0,0,0,.35);
+  --shadow-topbar: 0 14px 40px rgba(0,0,0,.4);
+  --shadow-inset-hi: inset 0 1px 0 rgba(255,255,255,.22);
+  --shadow-glass: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  --shadow-topbar-box: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  --shadow-modal: 0 -20px 60px rgba(0,0,0,.5);
+  --shadow-btn-primary: 0 8px 22px rgba(10,124,255,.38), inset 0 1px 0 rgba(255,255,255,.35);
+  --shadow-btn-danger: 0 4px 14px rgba(255,69,58,.2);
+  --shadow-spinner-track: rgba(255,255,255,.18);
+  --shadow-switch-thumb: 0 3px 8px rgba(0,0,0,.35);
+  --shadow-toast: 0 12px 32px rgba(0,0,0,.45);
+
+  --scrollbar-thumb: rgba(255,255,255,.15);
+  --track-bg: rgba(255,255,255,.14);
+  --bar-bg: rgba(255,255,255,.12);
+  --tbl-divider: rgba(255,255,255,.06);
+  --tbl-hover: rgba(255,255,255,.05);
+  --tbl-row-border: rgba(255,255,255,.07);
+  --dashed-border: rgba(255,255,255,.28);
+  --dropzone-bg: rgba(255,255,255,.045);
+  --dropzone-hover-bg: rgba(255,255,255,.1);
+  --dashed-border-strong: rgba(255,255,255,.5);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
   min-height: 100vh; color: var(--text); position: relative; overflow-x: hidden;
-  background: linear-gradient(165deg, #0b1026 0%, #151238 42%, #26104a 100%);
+  background: var(--bg-page);
   background-attachment: fixed;
   -webkit-tap-highlight-color: transparent;
 }
-::selection { background: rgba(10,132,255,.4); }
+::selection { background: rgba(10,132,255,.35); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
 
 /* ── 背景光斑 ─────────────────────────── */
 .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: .45; pointer-events: none; animation: drift 22s ease-in-out infinite alternate; z-index: 0; }
-.o1 { width: 52vmax; height: 52vmax; background: #22d3ee; top: -20%; left: -16%; }
-.o2 { width: 44vmax; height: 44vmax; background: #7c5cf6; bottom: -22%; right: -12%; animation-delay: -8s; }
-.o3 { width: 30vmax; height: 30vmax; background: #ec4899; top: 48%; left: 12%; animation-delay: -15s; opacity: .3; }
+.o1 { width: 52vmax; height: 52vmax; background: var(--orb-1); top: -20%; left: -16%; opacity: var(--orb-opacity); }
+.o2 { width: 44vmax; height: 44vmax; background: var(--orb-2); bottom: -22%; right: -12%; animation-delay: -8s; opacity: var(--orb-opacity); }
+.o3 { width: 30vmax; height: 30vmax; background: var(--orb-3); top: 48%; left: 12%; animation-delay: -15s; opacity: var(--orb-opacity); }
 @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(5vw,-6vh) scale(1.15); } }
 
 /* ── 布局 ─────────────────────────────── */
@@ -44,38 +134,38 @@ body {
 
 /* ── 玻璃卡片 ─────────────────────────── */
 .glass {
-  background: linear-gradient(150deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+  background: var(--glass);
   backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
   border: 1px solid var(--stroke-strong);
   border-radius: var(--radius);
-  box-shadow: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  box-shadow: var(--shadow-glass);
 }
 
 /* ── 顶栏 ─────────────────────────────── */
 .topbar {
   position: sticky; top: 12px; z-index: 50; margin-bottom: 22px;
   display: flex; align-items: center; gap: 12px; padding: 12px 18px;
-  background: linear-gradient(150deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
+  background: var(--glass-strong);
   backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
   border: 1px solid var(--stroke-strong); border-radius: 22px;
-  box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  box-shadow: var(--shadow-topbar-box);
 }
 .logo { width: 38px; height: 38px; border-radius: 12px; flex: none;
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(150deg, #67e8f9, #3b82f6 55%, #8b5cf6);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 6px 16px rgba(59,130,246,.4); }
+  box-shadow: var(--shadow-logo); }
 .logo svg { width: 22px; height: 22px; }
 .topbar h1 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
 .topbar .sub { font-size: 11.5px; color: var(--text-3); margin-top: 1px; }
 .topbar .spacer { flex: 1; }
 .traffic-pill {
   display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 14px;
-  background: rgba(255,255,255,.09); border: 1px solid var(--stroke);
+  background: var(--sf); border: 1px solid var(--stroke);
   font-size: 13px; font-variant-numeric: tabular-nums; cursor: pointer; white-space: nowrap;
   transition: background .2s;
 }
-.traffic-pill:hover { background: rgba(255,255,255,.15); }
-.traffic-pill .bar { width: 52px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.14); overflow: hidden; }
+.traffic-pill:hover { background: var(--sf-strong); }
+.traffic-pill .bar { width: 52px; height: 5px; border-radius: 3px; background: var(--track-bg); overflow: hidden; }
 .traffic-pill .bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg,#34d399,#0a84ff); transition: width .5s cubic-bezier(.22,1,.36,1); }
 .traffic-pill.danger .bar i { background: linear-gradient(90deg,#fbbf24,#ff453a); }
 .traffic-pill.danger { color: #ffb3ae; }
@@ -83,15 +173,15 @@ body {
 /* ── 侧边栏导航 ────────────────────────── */
 .sidebar {
   flex: none; width: 188px; padding: 14px 10px;
-  background: linear-gradient(150deg, rgba(255,255,255,.11), rgba(255,255,255,.04));
+  background: var(--glass);
   backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
   border: 1px solid var(--stroke-strong); border-radius: 22px;
-  box-shadow: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  box-shadow: var(--shadow-glass);
   display: flex; flex-direction: column; gap: 4px; position: sticky; top: 90px;
   max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin;
 }
 .sidebar::-webkit-scrollbar { width: 6px; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 .sb-main {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 12px; border-radius: 14px; cursor: pointer;
@@ -99,10 +189,10 @@ body {
   background: transparent; border: none; font-family: inherit; text-align: left;
   transition: all .22s; width: 100%; user-select: none;
 }
-.sb-main:hover { background: rgba(255,255,255,.09); color: #fff; }
+.sb-main:hover { background: var(--sf); color: var(--text); }
 .sb-main .ic { font-size: 17px; width: 22px; text-align: center; flex: none; }
 .sb-main .chev { margin-left: auto; font-size: 10px; opacity: .5; transition: transform .25s; }
-.sb-main.open { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); }
+.sb-main.open { color: var(--text); background: var(--sf-strong); box-shadow: var(--shadow-inset-hi); }
 .sb-main.open .chev { transform: rotate(90deg); opacity: .8; }
 .sb-main.single .chev { display: none; }
 .sb-sub {
@@ -117,10 +207,10 @@ body {
   background: transparent; border: none; font-family: inherit; text-align: left;
   transition: all .18s; width: 100%; user-select: none;
 }
-.sb-sub button:hover { color: #fff; background: rgba(255,255,255,.08); }
+.sb-sub button:hover { color: var(--text); background: var(--sf); }
 .sb-sub button.active {
-  color: #fff; background: rgba(10,132,255,.22);
-  box-shadow: inset 2px 0 0 #0a84ff, inset 0 1px 0 rgba(255,255,255,.18);
+  color: var(--text); background: rgba(10,132,255,.15);
+  box-shadow: inset 2px 0 0 #0a84ff, var(--shadow-inset-hi);
   font-weight: 600;
 }
 
@@ -144,7 +234,7 @@ body {
 .stat-card .label { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 7px; }
 .stat-card .value { margin-top: 8px; font-size: 27px; font-weight: 750; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .stat-card .value small { font-size: 14px; font-weight: 600; color: var(--text-2); margin-left: 3px; }
-.progress { margin-top: 12px; height: 7px; border-radius: 4px; background: rgba(255,255,255,.12); overflow: hidden; }
+.progress { margin-top: 12px; height: 7px; border-radius: 4px; background: var(--bar-bg); overflow: hidden; }
 .progress i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg,#34d399,#0a84ff); transition: width .6s cubic-bezier(.22,1,.36,1); }
 .progress.hot i { background: linear-gradient(90deg,#fbbf24,#ff453a); }
 .stat-card .foot { margin-top: 8px; font-size: 12px; color: var(--text-3); }
@@ -159,7 +249,7 @@ body {
 .chart .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 7px; min-width: 0; height: 100%; }
 .chart .bar { width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px;
   background: linear-gradient(180deg, rgba(103,232,249,.95), rgba(59,130,246,.55));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.4); transition: height .7s cubic-bezier(.22,1,.36,1); min-height: 3px; position: relative; }
+  box-shadow: var(--shadow-inset-hi); transition: height .7s cubic-bezier(.22,1,.36,1); min-height: 3px; position: relative; }
 .chart .bar:hover { background: linear-gradient(180deg, #67e8f9, #3b82f6); }
 .chart .bar span { position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
   font-size: 11px; color: var(--text-2); opacity: 0; transition: opacity .15s; white-space: nowrap; }
@@ -170,10 +260,10 @@ body {
 .tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .tbl th { text-align: left; padding: 9px 10px; color: var(--text-3); font-weight: 600; font-size: 12px;
   border-bottom: 1px solid var(--stroke); white-space: nowrap; }
-.tbl td { padding: 11px 10px; border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap; vertical-align: middle; }
+.tbl td { padding: 11px 10px; border-bottom: 1px solid var(--tbl-divider); white-space: nowrap; vertical-align: middle; }
 .tbl tr:last-child td { border-bottom: none; }
 .tbl tr { transition: background .15s; }
-.tbl tbody tr:hover { background: rgba(255,255,255,.05); }
+.tbl tbody tr:hover { background: var(--tbl-hover); }
 .tbl .num { font-variant-numeric: tabular-nums; }
 .mono { font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 12.5px; }
 .name-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
@@ -184,21 +274,21 @@ body {
 .ficon { width: 38px; height: 38px; border-radius: 11px; flex: none;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 800; letter-spacing: -.02em;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.18); vertical-align: middle; }
+  background: var(--sf-input); border: 1px solid var(--stroke);
+  box-shadow: var(--shadow-inset-hi); vertical-align: middle; }
 
 /* ── 按钮 ─────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 16px; border: 1px solid var(--stroke-strong); border-radius: 13px;
-  background: rgba(255,255,255,.1); color: #fff; font-size: 13.5px; font-weight: 600; font-family: inherit;
+  background: var(--glass-strong); color: var(--text); font-size: 13.5px; font-weight: 600; font-family: inherit;
   cursor: pointer; transition: all .18s; white-space: nowrap;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+  box-shadow: var(--shadow-inset-hi);
 }
-.btn:hover { background: rgba(255,255,255,.17); transform: translateY(-1px); }
+.btn:hover { background: var(--sf-strong); transform: translateY(-1px); }
 .btn:active { transform: scale(.96); }
 .btn.primary { background: linear-gradient(180deg,#3d9bff,#0a7cff); border-color: transparent;
-  box-shadow: 0 8px 22px rgba(10,124,255,.38), inset 0 1px 0 rgba(255,255,255,.35); }
+  box-shadow: var(--shadow-btn-primary); color: #fff; }
 .btn.primary:hover { filter: brightness(1.06); }
 .btn.danger { background: rgba(255,69,58,.16); border-color: rgba(255,69,58,.4); color: #ffb3ae; }
 .btn.danger:hover { background: rgba(255,69,58,.28); }
@@ -208,16 +298,16 @@ body {
 /* ── 上传区 ───────────────────────────── */
 .dropzone {
   margin-bottom: 18px; padding: 34px 20px; text-align: center; cursor: pointer;
-  border: 1.5px dashed rgba(255,255,255,.28); border-radius: var(--radius);
-  background: rgba(255,255,255,.045); transition: all .2s;
+  border: 1.5px dashed var(--dashed-border); border-radius: var(--radius);
+  background: var(--dropzone-bg); transition: all .2s;
 }
-.dropzone:hover, .dropzone.over { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.5); transform: scale(1.005); }
+.dropzone:hover, .dropzone.over { background: var(--dropzone-hover-bg); border-color: var(--dashed-border-strong); transform: scale(1.005); }
 .dropzone .icon { font-size: 34px; margin-bottom: 10px; }
 .dropzone .t { font-size: 15px; font-weight: 650; }
 .dropzone .d { margin-top: 6px; font-size: 12.5px; color: var(--text-3); }
 .upload-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-top: 10px;
-  border-radius: 16px; background: rgba(255,255,255,.07); border: 1px solid var(--stroke); font-size: 13.5px; }
-.upload-item .prog { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+  border-radius: 16px; background: var(--sf); border: 1px solid var(--stroke); font-size: 13.5px; }
+.upload-item .prog { flex: 1; height: 6px; border-radius: 3px; background: var(--bar-bg); overflow: hidden; }
 .upload-item .prog i { display: block; height: 100%; width: 0; border-radius: 3px;
   background: linear-gradient(90deg,#34d399,#0a84ff); transition: width .2s; }
 .upload-item .pct { min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); }
@@ -227,10 +317,10 @@ body {
 .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 7px; }
 .field input, .field select {
   width: 100%; padding: 12px 14px; border-radius: 14px; font-size: 15px; font-family: inherit;
-  color: #fff; background: rgba(255,255,255,.09); border: 1px solid var(--stroke-strong); outline: none;
+  color: var(--text); background: var(--sf-input); border: 1px solid var(--stroke-strong); outline: none;
   transition: border .2s, background .2s; -webkit-appearance: none; appearance: none;
 }
-.field input:focus { border-color: rgba(10,132,255,.7); background: rgba(255,255,255,.13); }
+.field input:focus { border-color: rgba(10,132,255,.7); background: var(--sf-input-focus); }
 .field input::placeholder { color: var(--text-3); }
 .field .tip { margin-top: 6px; font-size: 12px; color: var(--text-3); line-height: 1.5; }
 
@@ -238,7 +328,7 @@ body {
 .group { border-radius: 22px; overflow: hidden; margin-bottom: 16px; }
 .group .row {
   display: flex; align-items: center; gap: 12px; padding: 14px 18px;
-  border-bottom: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.05);
+  border-bottom: 1px solid var(--tbl-row-border); background: var(--sf-soft);
 }
 .group .row:last-child { border-bottom: none; }
 .group .row .info { flex: 1; min-width: 0; }
@@ -246,7 +336,7 @@ body {
 .group .row .info .d { margin-top: 3px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
 .group .row input[type=number], .group .row input[type=text] {
   width: 110px; padding: 9px 12px; border-radius: 12px; font-size: 14.5px; font-family: inherit;
-  color: #fff; background: rgba(255,255,255,.1); border: 1px solid var(--stroke-strong); outline: none; text-align: right;
+  color: var(--text); background: var(--sf-input); border: 1px solid var(--stroke-strong); outline: none; text-align: right;
   font-variant-numeric: tabular-nums;
 }
 .group .row input[type=number]:focus { border-color: rgba(10,132,255,.7); }
@@ -255,24 +345,24 @@ body {
 /* iOS 开关 */
 .switch { position: relative; width: 50px; height: 30px; flex: none; cursor: pointer; }
 .switch input { opacity: 0; width: 0; height: 0; }
-.switch .track { position: absolute; inset: 0; border-radius: 16px; background: rgba(255,255,255,.16); transition: background .25s; }
+.switch .track { position: absolute; inset: 0; border-radius: 16px; background: var(--track-bg); transition: background .25s; }
 .switch .thumb { position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%;
-  background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.35); transition: transform .25s cubic-bezier(.22,1.2,.36,1); }
+  background: #fff; box-shadow: var(--shadow-switch-thumb); transition: transform .25s cubic-bezier(.22,1.2,.36,1); }
 .switch input:checked + .track { background: linear-gradient(180deg,#3d9bff,#0a7cff); }
 .switch input:checked + .track .thumb { transform: translateX(20px); }
 
 /* ── 模态框（底部弹层风格） ───────────── */
 .modal-mask { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center;
-  background: rgba(0,0,0,.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  background: rgba(0,0,0,.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   animation: fadeIn .25s both; }
 @media (min-width: 640px) { .modal-mask { align-items: center; padding-bottom: 0; } }
 .modal {
   width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto;
   padding: 26px; border-radius: 32px 32px 0 0;
-  background: linear-gradient(160deg, rgba(40,38,80,.92), rgba(24,22,52,.95));
+  background: var(--glass-strong);
   backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid var(--stroke-strong); border-bottom: none;
-  box-shadow: 0 -20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: var(--shadow-modal), var(--shadow-inset-hi);
   animation: sheetUp .4s cubic-bezier(.22,1.1,.36,1) both;
 }
 @media (min-width: 640px) { .modal { border-radius: 32px; border-bottom: 1px solid var(--stroke-strong); } }
@@ -284,16 +374,16 @@ body {
 .modal .actions .btn { flex: 1; padding: 13px; font-size: 15px; border-radius: 16px; }
 .link-box { display: flex; gap: 8px; margin-top: 4px; }
 .link-box input { flex: 1; padding: 12px 14px; border-radius: 14px; font-size: 14px;
-  font-family: ui-monospace, "SF Mono", monospace; color: #a5d8ff;
-  background: rgba(0,0,0,.3); border: 1px solid var(--stroke); outline: none; }
+  font-family: ui-monospace, "SF Mono", monospace; color: var(--text);
+  background: var(--sf-input); border: 1px solid var(--stroke); outline: none; }
 
 /* ── Toast ────────────────────────────── */
 #toasts { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 200;
   display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
 .toast {
-  padding: 11px 22px; border-radius: 16px; font-size: 14px; font-weight: 600; color: #fff;
-  background: rgba(30,28,60,.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--stroke-strong); box-shadow: 0 12px 32px rgba(0,0,0,.45);
+  padding: 11px 22px; border-radius: 16px; font-size: 14px; font-weight: 600; color: var(--text);
+  background: var(--glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--stroke-strong); box-shadow: var(--shadow-toast);
   animation: toastIn .35s cubic-bezier(.22,1.2,.36,1) both; max-width: 86vw; text-align: center;
 }
 .toast.ok { border-color: rgba(52,211,153,.5); }
@@ -318,8 +408,8 @@ body {
 .banner { display: flex; gap: 12px; align-items: flex-start; padding: 15px 18px; margin-bottom: 18px;
   border-radius: 20px; background: rgba(255,159,10,.12); border: 1px solid rgba(255,159,10,.38); }
 .banner .ic { font-size: 20px; line-height: 1.3; }
-.banner .t { font-size: 14px; font-weight: 650; color: #ffd9a0; }
-.banner .d { margin-top: 3px; font-size: 12.5px; color: rgba(255,217,160,.75); line-height: 1.55; }
+.banner .t { font-size: 14px; font-weight: 650; color: #b45309; }
+.banner .d { margin-top: 3px; font-size: 12.5px; color: rgba(180,83,9,.7); line-height: 1.55; }
 
 /* ── 登录页 ───────────────────────────── */
 #login-view { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; z-index: 1; }
@@ -330,9 +420,9 @@ body {
 .login-card h1 { font-size: 23px; font-weight: 750; letter-spacing: -.03em; }
 .login-card .sub { margin: 8px 0 26px; font-size: 13.5px; color: var(--text-3); }
 .login-card input { width: 100%; padding: 15px 18px; border-radius: 18px; font-size: 16px; font-family: inherit;
-  color: #fff; background: rgba(255,255,255,.09); border: 1px solid var(--stroke-strong); outline: none; text-align: center;
+  color: var(--text); background: var(--sf-input); border: 1px solid var(--stroke-strong); outline: none; text-align: center;
   transition: border .2s, background .2s; }
-.login-card input:focus { border-color: rgba(10,132,255,.75); background: rgba(255,255,255,.13); }
+.login-card input:focus { border-color: rgba(10,132,255,.75); background: var(--sf-input-focus); }
 .login-card .btn { width: 100%; margin-top: 14px; padding: 15px; font-size: 16px; border-radius: 18px; }
 .login-card .err { margin-top: 12px; font-size: 13px; color: #fda293; min-height: 18px; }
 .login-card .lang-row { margin-top: 18px; }
@@ -340,7 +430,7 @@ body {
 @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-9px)} 40%,80%{transform:translateX(9px)} }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-.spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid rgba(255,255,255,.18); border-top-color: #fff; animation: spin .8s linear infinite; margin: 30px auto; }
+.spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--shadow-spinner-track); border-top-color: var(--text); animation: spin .8s linear infinite; margin: 30px auto; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .actions-cell { display: flex; gap: 6px; }
@@ -610,6 +700,11 @@ const I18N = {
     dbStatusMissingCols: '缺失的列',
     dbStatusMissingIdx: '缺失的索引',
     dbTableRows: '表行数',
+    // UI 主题
+    uiThemeTitle: '🎨 界面主题',
+    uiThemeD: '白色 Apple 风格（默认）更清爽；暗色经典风格适合夜间使用。',
+    uiThemeLight: '☀️ 浅色',
+    uiThemeDark: '🌙 深色',
     confirmDeleteTitle: '确认删除',
     confirmOAuthDeleteD: '删除后此 Provider 的配置将永久删除。已生成的 OAuth2 会话不受影响，但新登录请求将无法使用此 Provider。确定删除吗？',
     custom: '自定义',
@@ -935,6 +1030,11 @@ const I18N = {
     dbStatusMissingCols: 'Missing columns',
     dbStatusMissingIdx: 'Missing indexes',
     dbTableRows: 'Row counts',
+    // UI theme
+    uiThemeTitle: '🎨 UI Theme',
+    uiThemeD: 'Light Apple style (default) for clarity; dark classic style for night use.',
+    uiThemeLight: '☀️ Light',
+    uiThemeDark: '🌙 Dark',
     confirmDeleteTitle: 'Confirm Delete',
     confirmOAuthDeleteD: 'This provider config will be permanently deleted. Existing OAuth sessions remain valid, but new login requests cannot use this provider. Are you sure?',
     custom: 'Custom',
@@ -1284,6 +1384,8 @@ async function showApp(){
   try{
     const s = await api('/api/admin/session');
     siteTitle = s.site_title || siteTitle;
+    // 根据后端偏好设置主题（默认 light）
+    document.documentElement.dataset.theme = s.ui_theme === 'dark' ? 'dark' : 'light';
   }catch{}
   document.title = t('docTitle', {site: siteTitle});
 
@@ -1548,7 +1650,7 @@ function openShareModal(fileId){
     <div class="sub">${esc(t('shareModalSub'))}</div>
     <div class="field">
       <label>${esc(t('validity'))}</label>
-      <select id="sh-exp" style="width:100%;padding:12px 14px;border-radius:14px;font-size:15px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+      <select id="sh-exp" style="width:100%;padding:12px 14px;border-radius:14px;font-size:15px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
         <option value="0" style="color:#111">${esc(t('perm'))}</option>
         <option value="1" style="color:#111">${esc(t('h1'))}</option>
         <option value="24" style="color:#111">${esc(t('d1'))}</option>
@@ -1616,7 +1718,7 @@ function openDirectModal(fileId){
     <div class="sub">${esc(t('directModalSub'))}</div>
     <div class="field">
       <label>${esc(t('validity'))}</label>
-      <select id="dl-exp" style="width:100%;padding:12px 14px;border-radius:14px;font-size:15px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+      <select id="dl-exp" style="width:100%;padding:12px 14px;border-radius:14px;font-size:15px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
         <option value="0" style="color:#111">${esc(t('perm'))}</option>
         <option value="1" style="color:#111">${esc(t('h1'))}</option>
         <option value="24" style="color:#111">${esc(t('d1'))}</option>
@@ -1690,7 +1792,7 @@ async function loadShares(){
           return `
           <tr>
             <td class="name-cell">${ficon(s.file_name)} ${esc(s.file_name)}${s.download_name && s.download_name !== s.file_name ? `<div style="font-size:11px;color:#6ee7b7;margin-top:2px">↳ ${esc(s.download_name)}</div>` : ''}</td>
-            <td class="mono">${s.has_password?'🔒 ':''}<a href="/s/${s.id}" target="_blank" style="color:#a5d8ff;text-decoration:none">/s/${s.id}</a></td>
+            <td class="mono">${s.has_password?'🔒 ':''}<a href="/s/${s.id}" target="_blank" style="color:var(--blue);text-decoration:none">/s/${s.id}</a></td>
             <td class="mono">${pw ? `<span id="pw-${s.id}" style="font-family:ui-monospace,'SF Mono',monospace;color:#fde68a">••••••</span>
               <button class="btn sm" data-pw="${s.id}" data-val="${esc(pw)}" style="padding:2px 8px;font-size:11px;margin-left:4px">👁</button>
               <button class="btn sm" data-cpw="${esc(pw)}" style="padding:2px 8px;font-size:11px">📋</button>` : `<span style="color:var(--text-3)">—</span>`}</td>
@@ -1749,7 +1851,7 @@ async function loadLogs(){
       <div class="section-title"><h2>📜 ${esc(t('logsTitle'))}（${esc(t('totalN',{n:d.total}))}）</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <input id="log-q" placeholder="${esc(t('searchPlaceholder'))}" value="${esc(logsQuery)}"
-            style="padding:8px 14px;border-radius:12px;font-size:13px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none;width:180px">
+            style="padding:8px 14px;border-radius:12px;font-size:13px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;width:180px">
           <button class="btn sm" id="clear-30">${esc(t('clear30'))}</button>
           <button class="btn sm danger" id="clear-all">${esc(t('clearAll'))}</button>
         </div>
@@ -1846,9 +1948,9 @@ async function loadBans(){
       <div class="section-title"><h2>⛔ ${esc(t('manualBan'))}</h2></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <input id="ban-ip" placeholder="${esc(t('ipPlaceholder'))}" class="mono"
-          style="flex:1;min-width:160px;padding:11px 14px;border-radius:14px;font-size:14px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+          style="flex:1;min-width:160px;padding:11px 14px;border-radius:14px;font-size:14px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
         <input id="ban-reason" placeholder="${esc(t('reasonPlaceholder'))}"
-          style="flex:1;min-width:160px;padding:11px 14px;border-radius:14px;font-size:14px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+          style="flex:1;min-width:160px;padding:11px 14px;border-radius:14px;font-size:14px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
         <button class="btn primary" id="ban-add">${esc(t('ban'))}</button>
       </div>
       <div class="field" style="margin:12px 0 0"><div class="tip">${esc(t('banTip'))}</div></div>
@@ -1908,18 +2010,18 @@ async function loadSecurity(){
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <select id="sec-action" style="padding:8px 12px;border-radius:12px;font-size:13px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+        <select id="sec-action" style="padding:8px 12px;border-radius:12px;font-size:13px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
           <option value="" style="color:#111">${esc(t('secActionAll'))}</option>
           <option value="login" style="color:#111">${esc(t('actionLogin'))}</option>
           <option value="logout" style="color:#111">${esc(t('actionLogout'))}</option>
         </select>
-        <select id="sec-result" style="padding:8px 12px;border-radius:12px;font-size:13px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+        <select id="sec-result" style="padding:8px 12px;border-radius:12px;font-size:13px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
           <option value="" style="color:#111">${esc(t('secFilterAll'))}</option>
           <option value="success" style="color:#111">${esc(t('secFilterSuccess'))}</option>
           <option value="fail" style="color:#111">${esc(t('secFilterFail'))}</option>
         </select>
         <input id="sec-q" placeholder="${esc(t('secSearchPh'))}" value="${esc(secQuery)}"
-          style="padding:8px 14px;border-radius:12px;font-size:13px;font-family:inherit;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none;flex:1;min-width:160px">
+          style="padding:8px 14px;border-radius:12px;font-size:13px;font-family:inherit;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;flex:1;min-width:160px">
         <button class="btn sm" id="sec-clear-30">${esc(t('secClear30'))}</button>
         <button class="btn sm danger" id="sec-clear-all">${esc(t('secClearAll'))}</button>
       </div>
@@ -2240,7 +2342,7 @@ async function loadCodes(){
         <div class="stat-box" style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px;border:1px solid var(--stroke)">
           <div style="color:var(--text-3);font-size:12px">${esc(t('codesColTraffic'))}</div>
           <div style="font-size:18px;font-weight:700;margin-top:4px">${usedTrafficGB} / ${totalTrafficGB} GB</div>
-          <div style="margin-top:6px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden">
+          <div style="margin-top:6px;height:4px;background:var(--track-bg);border-radius:2px;overflow:hidden">
             <div style="height:100%;width:${trafficPct}%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:2px"></div>
           </div>
         </div>
@@ -2289,7 +2391,7 @@ async function loadCodes(){
       <div class="section-title">
         <h2>📋 ${esc(t('codesListTitle'))} <span id="codes-total-count" style="color:var(--text-3);font-weight:400;font-size:13px"></span></h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <select id="cf-status" style="padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);color:#fff;font-size:13px;font-family:inherit;outline:none">
+          <select id="cf-status" style="padding:8px 12px;border-radius:10px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:13px;font-family:inherit;outline:none">
             <option value="">${esc(t('codesFilterAll'))} ${esc(t('codesFilterStatus'))}</option>
             <option value="unused">${esc(t('codesStatusUnused'))}</option>
             <option value="active">${esc(t('codesStatusActive'))}</option>
@@ -2297,11 +2399,11 @@ async function loadCodes(){
             <option value="exhausted">${esc(t('codesStatusExhausted'))}</option>
             <option value="revoked">${esc(t('codesStatusRevoked'))}</option>
           </select>
-          <select id="cf-batch" style="padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);color:#fff;font-size:13px;font-family:inherit;outline:none">
+          <select id="cf-batch" style="padding:8px 12px;border-radius:10px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:13px;font-family:inherit;outline:none">
             <option value="">${esc(t('codesFilterAll'))} ${esc(t('codesFilterBatch'))}</option>
             ${batchOptions.map(b => `<option value="${esc(b.batch_id)}">${esc(b.batch_id)} (${b.count||b.n||0})</option>`).join('')}
           </select>
-          <input type="text" id="cf-q" placeholder="${esc(t('codesFilterQ'))}" value="${esc(codesQ)}" style="padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);color:#fff;font-size:13px;font-family:inherit;outline:none;width:180px">
+          <input type="text" id="cf-q" placeholder="${esc(t('codesFilterQ'))}" value="${esc(codesQ)}" style="padding:8px 12px;border-radius:10px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:13px;font-family:inherit;outline:none;width:180px">
           <button class="btn sm" id="cf-export">${esc(t('codesExportCsv'))}</button>
           <button class="btn sm danger" id="cf-revoke-batch">${esc(t('codesRevokeBatch'))}</button>
         </div>
@@ -2419,7 +2521,7 @@ async function loadCodesList(){
               <td style="padding:10px 8px;color:var(--text-2)">${esc(r.batch_id||'—')}</td>
               <td style="padding:10px 8px">
                 <div>${usedGB} / ${trafficGB}</div>
-                ${r.traffic_bytes > 0 ? `<div style="margin-top:4px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:2px"></div></div>` : ''}
+                ${r.traffic_bytes > 0 ? `<div style="margin-top:4px;height:3px;background:var(--track-bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:2px"></div></div>` : ''}
               </td>
               <td style="padding:10px 8px"><span style="color:${statusColor[r.status]||'#fff'}">${esc(statusLabel[r.status]||r.status)}</span></td>
               <td style="padding:10px 8px;color:var(--text-2)">${fmtTime(r.activated_at)}</td>
@@ -2475,6 +2577,31 @@ async function loadSettings(){
     api('/api/admin/db/status').catch(() => null),
   ]);
   $('#view').innerHTML = `
+    <!-- 主题选择器 -->
+    <div class="glass group">
+      <div class="row" style="align-items:flex-start">
+        <div class="info" style="flex:1">
+          <div class="t">${esc(t('uiThemeTitle'))}</div>
+          <div class="d" style="font-size:12px;line-height:1.6;margin-top:2px">${esc(t('uiThemeD'))}</div>
+        </div>
+      </div>
+      <div class="row" style="border:none;padding-top:8px">
+        <label style="flex:1;cursor:pointer">
+          <input type="radio" name="ui-theme" value="light" ${(s.ui_theme||'light')==='light'?'checked':''} style="display:none">
+          <div style="padding:14px;border-radius:14px;border:1px solid ${(s.ui_theme||'light')==='light'?'var(--blue)':'var(--stroke-strong)'};background:${(s.ui_theme||'light')==='light'?'rgba(10,132,255,.08)':'var(--sf)'};transition:all .18s;text-align:center">
+            <div style="font-size:22px">☀️</div>
+            <div style="font-weight:600;margin-top:2px">${esc(t('uiThemeLight'))}</div>
+          </div>
+        </label>
+        <label style="flex:1;cursor:pointer">
+          <input type="radio" name="ui-theme" value="dark" ${(s.ui_theme||'light')==='dark'?'checked':''} style="display:none">
+          <div style="padding:14px;border-radius:14px;border:1px solid ${(s.ui_theme||'light')==='dark'?'var(--blue)':'var(--stroke-strong)'};background:${(s.ui_theme||'light')==='dark'?'rgba(10,132,255,.08)':'var(--sf)'};transition:all .18s;text-align:center">
+            <div style="font-size:22px">🌙</div>
+            <div style="font-weight:600;margin-top:2px">${esc(t('uiThemeDark'))}</div>
+          </div>
+        </label>
+      </div>
+    </div>
     <div class="glass group">
       <div class="row">
         <div class="info"><div class="t">${esc(t('siteName'))}</div><div class="d">${esc(t('siteNameD'))}</div></div>
@@ -2524,7 +2651,7 @@ async function loadSettings(){
     <div class="glass group">
       <div class="row" style="flex-direction:column;align-items:stretch;gap:10px">
         <div class="info" style="margin-bottom:4px"><div class="t">🔒 ${esc(t('ipWhitelist'))}</div><div class="d">${esc(t('ipWhitelistD'))}</div></div>
-        <textarea id="st-adminips" rows="3" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace;resize:vertical" placeholder="${esc(t('ipWhitelistPh'))}">${esc(s.admin_ips ?? '')}</textarea>
+        <textarea id="st-adminips" rows="3" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace;resize:vertical" placeholder="${esc(t('ipWhitelistPh'))}">${esc(s.admin_ips ?? '')}</textarea>
         <div class="tip" style="margin-top:4px">
           ${s.admin_ips ? `<span style="color:#6ee7b7">${esc(t('ipWhitelistOn'))}</span>` : `<span style="color:#fde68a">${esc(t('ipWhitelistOff'))}</span>`}
           ${esc(t('ipWhitelistHint'))}
@@ -2553,7 +2680,7 @@ async function loadSettings(){
       </div>
       <div class="row">
         <div class="info"><div class="t">${esc(t('codesFloatingBtnPosition'))}</div><div class="d">${esc(t('codesFloatingBtnHint'))}</div></div>
-        <select id="st-codes-pos" style="padding:9px 14px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:14px;font-family:inherit;outline:none;min-width:110px">
+        <select id="st-codes-pos" style="padding:9px 14px;border-radius:12px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:14px;font-family:inherit;outline:none;min-width:110px">
           <option value="top-right" ${(s.codes_floating_button_position || 'top-right') === 'top-right' ? 'selected' : ''}>${esc(t('codesFloatingBtnPosRight'))}</option>
           <option value="top-left" ${s.codes_floating_button_position === 'top-left' ? 'selected' : ''}>${esc(t('codesFloatingBtnPosLeft'))}</option>
         </select>
@@ -2562,7 +2689,7 @@ async function loadSettings(){
     <!-- 2FA 组 -->
     <div class="glass group">
       <div class="row">
-        <div class="info"><div class="t">🛡️ ${esc(t('twofa'))} ${twofaStatus.enabled ? `<span class="tag active" style="margin-left:6px"><i></i>${esc(t('twofaStatusOn'))}</span>` : `<span class="tag" style="margin-left:6px;background:rgba(255,255,255,.1);color:#a5b4fc"><i></i>${esc(t('twofaStatusOff'))}</span>`}</div>
+        <div class="info"><div class="t">🛡️ ${esc(t('twofa'))} ${twofaStatus.enabled ? `<span class="tag active" style="margin-left:6px"><i></i>${esc(t('twofaStatusOn'))}</span>` : `<span class="tag" style="margin-left:6px;background:var(--sf-input);color:#a5b4fc"><i></i>${esc(t('twofaStatusOff'))}</span>`}</div>
         <div class="d">${esc(t('twofaD'))}</div></div>
         <label class="switch" id="twofa-switch" style="${twofaStatus.enabled ? '' : 'opacity:.5;pointer-events:none'}">
           <input type="checkbox" ${twofaStatus.enabled ? 'checked' : ''} disabled>
@@ -2594,7 +2721,7 @@ async function loadSettings(){
               <span style="color:${s.turnstile_mode==='off'?'#a5b4fc':'#6ee7b7'}">${esc(t('tsMode'))}: ${s.turnstile_mode}</span>
               · <span>${esc(t('tsThreshold'))}: ${s.turnstile_threshold ?? 5}</span>
               · ${s.cloudflare_turnstile_secret ? `<span style="color:#6ee7b7">✓ ${esc(t('tsSecretOk'))}</span>` : `<span style="color:#fda293">⚠ ${esc(t('tsSecretMissing'))}</span>`}
-              · ${s.cloudflare_turnstile_sitekey ? `<span style="color:#6ee7b7">✓ Sitekey Cloudflare</span>` : (s.turnstile_sitekey_override ? `<span style="color:#a5d8ff">✓ Sitekey Override</span>` : `<span style="color:#fde68a">⚠ Sitekey Missing</span>`)}
+              · ${s.cloudflare_turnstile_sitekey ? `<span style="color:#6ee7b7">✓ Sitekey Cloudflare</span>` : (s.turnstile_sitekey_override ? `<span style="color:var(--blue)">✓ Sitekey Override</span>` : `<span style="color:#fde68a">⚠ Sitekey Missing</span>`)}
             </div>
           </div>
         </div>
@@ -2624,7 +2751,7 @@ async function loadSettings(){
       <!-- Provider 卡片列表 -->
       <div id="oauth-providers-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:6px">
         ${(s.oauth_providers && s.oauth_providers.length) ? s.oauth_providers.map(p => `
-          <div class="oauth-provider-card" data-oauth-id="${esc(p.id)}" style="padding:14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid ${p.enabled ? 'rgba(110,231,183,.35)' : 'rgba(255,255,255,.1)'}">
+          <div class="oauth-provider-card" data-oauth-id="${esc(p.id)}" style="padding:14px;border-radius:14px;background:var(--sf-soft);border:1px solid ${p.enabled ? 'rgba(110,231,183,.45)' : 'var(--stroke)'}">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <div style="font-weight:600;font-size:14px">${esc(p.label)} <span style="font-size:11px;color:var(--text-3);font-weight:400">${esc(p.provider_type)}</span></div>
               <span class="tag ${p.enabled?'active':''}" style="font-size:11px"><i></i>${p.enabled ? esc(t('oauthEnabled')) : esc(t('oauthDisabled'))}</span>
@@ -2655,26 +2782,26 @@ async function loadSettings(){
         ${dbStatus ? (dbStatus.healthy
           ? `<span class="tag active"><i></i>${esc(t('dbHealthy'))}</span>`
           : `<span class="tag" style="background:rgba(255,159,10,.16);color:#fcd34d"><i></i>${esc(t('dbNeedRepair'))}</span>`
-        ) : `<span class="tag" style="background:rgba(255,255,255,.1);color:#a5b4fc"><i></i>—</span>`}
+        ) : `<span class="tag" style="background:var(--sf-input);color:#a5b4fc"><i></i>—</span>`}
       </div>
       ${dbStatus ? `
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:8px">
-          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:10px 14px;border-radius:12px;background:var(--sf-soft);border:1px solid var(--stroke)">
             <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbTables'))}</div>
             <div style="font-size:14px;font-weight:600">${esc(t('dbTablesOk',{a:dbStatus.tables.existing.length,b:dbStatus.tables.expected.length}))}</div>
             ${dbStatus.tables.missing.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${esc(t('dbStatusMissingTables'))}: ${dbStatus.tables.missing.join(', ')}</div>` : ''}
           </div>
-          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:10px 14px;border-radius:12px;background:var(--sf-soft);border:1px solid var(--stroke)">
             <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbColumns'))}</div>
             <div style="font-size:14px;font-weight:600;color:${dbStatus.columns.length ? '#fcd34d' : '#6ee7b7'}">${dbStatus.columns.length ? esc(t('dbMissingCount',{n:dbStatus.columns.length})) : '✓'}</div>
             ${dbStatus.columns.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${dbStatus.columns.map(c=>c.table+'.'+c.column).join(', ')}</div>` : ''}
           </div>
-          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:10px 14px;border-radius:12px;background:var(--sf-soft);border:1px solid var(--stroke)">
             <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbIndexes'))}</div>
             <div style="font-size:14px;font-weight:600;color:${dbStatus.indexes.length ? '#fcd34d' : '#6ee7b7'}">${dbStatus.indexes.length ? esc(t('dbMissingCount',{n:dbStatus.indexes.length})) : '✓'}</div>
             ${dbStatus.indexes.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${dbStatus.indexes.join(', ')}</div>` : ''}
           </div>
-          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:10px 14px;border-radius:12px;background:var(--sf-soft);border:1px solid var(--stroke)">
             <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbMigration'))}</div>
             <div style="font-size:14px;font-weight:600;color:${dbStatus.migration.latest ? '#6ee7b7' : '#fcd34d'}">${dbStatus.migration.current} / ${dbStatus.migration.total}</div>
           </div>
@@ -2693,6 +2820,23 @@ async function loadSettings(){
       </div>
     </div>
     <button class="btn primary" id="st-save" style="padding:14px 28px;font-size:15px;border-radius:18px">${esc(t('save'))}</button>`;
+
+  // ── UI 主题切换（实时生效 + 持久化） ──
+  document.querySelectorAll('input[name="ui-theme"]').forEach(radio => {
+    radio.addEventListener('change', async () => {
+      const theme = radio.value;
+      // 立即生效
+      document.documentElement.dataset.theme = theme;
+      try {
+        await api('/api/admin/settings', {
+          method: 'PUT',
+          body: JSON.stringify({ ui_theme: theme }),
+        });
+      } catch {}
+      // 重新 loadSettings 来更新选中状态高亮
+      loadSettings();
+    });
+  });
 
   // ── 数据库工具按钮 ──
   $('#db-refresh')?.addEventListener('click', () => loadSettings());
@@ -2771,7 +2915,7 @@ async function loadSettings(){
       <div class="sub">${esc(t('tsGroupD'))}</div>
       <div class="field" style="margin-top:14px">
         <label>${esc(t('tsMode'))}</label>
-        <select id="ts-m" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+        <select id="ts-m" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
           <option value="off" ${s.turnstile_mode==='off'?'selected':''} style="color:#111">${esc(t('tsModeOff'))}</option>
           <option value="on_share" ${s.turnstile_mode==='on_share'?'selected':''} style="color:#111">${esc(t('tsModeShare'))}</option>
           <option value="on_download" ${s.turnstile_mode==='on_download'?'selected':''} style="color:#111">${esc(t('tsModeDownload'))}</option>
@@ -2780,26 +2924,26 @@ async function loadSettings(){
       </div>
       <div class="field">
         <label>${esc(t('tsThreshold'))}</label>
-        <input type="number" id="ts-th" min="0" max="10000" value="${s.turnstile_threshold ?? 5}" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none">
+        <input type="number" id="ts-th" min="0" max="10000" value="${s.turnstile_threshold ?? 5}" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none">
         <div class="tip">${esc(t('tsThresholdHelp'))}</div>
       </div>
       <div class="field">
         <label>${esc(t('tsSitekeyOverride'))}</label>
-        <input type="text" id="ts-sko" value="${esc(s.turnstile_sitekey_override ?? '')}" placeholder="0xAAAA..." style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace">
+        <input type="text" id="ts-sko" value="${esc(s.turnstile_sitekey_override ?? '')}" placeholder="0xAAAA..." style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace">
       </div>
       <div class="field">
         <label>${esc(t('tsSecretOverride'))}</label>
-        <input type="password" id="ts-secret" value="" placeholder="${s.cloudflare_turnstile_secret || s.turnstile_secret_configured ? esc(t('tsSecretKeep')) : esc(t('tsSecretPlaceholder'))}" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace">
+        <input type="password" id="ts-secret" value="" placeholder="${s.cloudflare_turnstile_secret || s.turnstile_secret_configured ? esc(t('tsSecretKeep')) : esc(t('tsSecretPlaceholder'))}" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace">
         <div class="tip" style="line-height:1.6">
           ${s.cloudflare_turnstile_secret
             ? `<span style="color:#6ee7b7">✓ ${esc(t('tsSecretOk'))} — ${esc(t('tsSecretInCloudflare'))}</span>`
             : s.turnstile_secret_configured
-              ? `<span style="color:#a5d8ff">✓ ${esc(t('tsSecretOk'))} — ${esc(t('tsSecretInDatabase'))}</span>`
+              ? `<span style="color:var(--blue)">✓ ${esc(t('tsSecretOk'))} — ${esc(t('tsSecretInDatabase'))}</span>`
               : `<span style="color:#fda293">⚠ ${esc(t('tsSecretMissing'))} — ${esc(t('tsSecretHint'))}</span>`}<br>
           ${s.cloudflare_turnstile_sitekey
             ? `<span style="color:#6ee7b7">✓ Sitekey ${esc(t('tsInCloudflare'))}</span>`
             : s.turnstile_sitekey_override
-              ? `<span style="color:#a5d8ff">✓ Sitekey ${esc(t('tsInDatabase'))}</span>`
+              ? `<span style="color:var(--blue)">✓ Sitekey ${esc(t('tsInDatabase'))}</span>`
               : `<span style="color:#fde68a">⚠ Sitekey ${esc(t('tsMissingBoth'))}</span>`}
         </div>
       </div>
@@ -2906,7 +3050,7 @@ async function loadSettings(){
       <div class="field" style="margin-top:8px">
         <div style="font-size:12px;color:var(--text-3);line-height:1.6">
           ${esc(t('oauthCallbackUrl'))}:<br>
-          <input type="text" readonly value="${esc(window.location.origin)}/oauth/callback" style="width:100%;margin-top:4px;padding:8px 12px;border-radius:10px;font-size:12px;color:#a5d8ff;background:rgba(0,0,0,.3);border:1px solid var(--stroke);outline:none;font-family:ui-monospace,'SF Mono',monospace" onclick="this.select()">
+          <input type="text" readonly value="${esc(window.location.origin)}/oauth/callback" style="width:100%;margin-top:4px;padding:8px 12px;border-radius:10px;font-size:12px;color:var(--blue);background:rgba(0,0,0,.3);border:1px solid var(--stroke);outline:none;font-family:ui-monospace,'SF Mono',monospace" onclick="this.select()">
           <div style="margin-top:4px">${esc(t('oauthCallbackHint'))}</div>
         </div>
       </div>
@@ -2995,7 +3139,7 @@ async function loadSettings(){
         </div>
         <div style="margin:10px 0;font-size:13px">
           <div style="color:var(--text-3);margin-bottom:4px">${esc(t('twofaSetupKey'))}:</div>
-          <input readonly value="${esc(r.secret)}" style="width:100%;padding:10px 12px;border-radius:10px;font-family:ui-monospace,'SF Mono',monospace;font-size:13px;color:#a5d8ff;background:rgba(0,0,0,.3);border:1px solid var(--stroke)" onclick="this.select()">
+          <input readonly value="${esc(r.secret)}" style="width:100%;padding:10px 12px;border-radius:10px;font-family:ui-monospace,'SF Mono',monospace;font-size:13px;color:var(--blue);background:rgba(0,0,0,.3);border:1px solid var(--stroke)" onclick="this.select()">
         </div>
         <div class="field" style="margin:12px 0">
           <input type="text" id="2fa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="${esc(t('twofaSetupCodePh'))}" style="text-align:center;letter-spacing:.4em;font-size:18px">
