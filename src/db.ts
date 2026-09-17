@@ -247,30 +247,44 @@ export async function ensureSchema(env: Env): Promise<void> {
   //    Worker 冷启动 / isolate 重启时 schemaReady=false，会重新跑一遍
   if (schemaReady) return;
 
-  // ③ 跨 Isolate 安全检测：用 sqlite_master 检查表是否存在
-  let tablesExist = false;
+  // ③ 跨 Isolate 安全检测：用 sqlite_master 检查所有预期的表是否都存在
+  //    只检查 settings 不够 —— 如果数据库由旧版本初始化（已有 settings/files/shares），
+  //    后续新增的 direct_links / oauth_providers / directories 等新表会被跳过。
+  //    这里检查所有表，缺任何一个都跑 DDL（CREATE TABLE IF NOT EXISTS 幂等，已有表不会报错）。
+  const EXPECTED_TABLES = [
+    "files", "shares", "direct_links", "download_logs", "login_logs",
+    "turnstile_visits", "banned_ips", "settings", "traffic_stats",
+    "oauth_states", "oauth_providers", "activation_plans", "activation_codes",
+    "directories",
+  ];
+  let needCreate = false;
   try {
-    const row: any = await env.db.prepare(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name='settings'"
-    ).first();
-    tablesExist = !!row;
+    const { results }: any = await env.db.prepare(
+      "SELECT name FROM sqlite_master WHERE type='table'"
+    ).all();
+    const existing = new Set((results ?? []).map((r: any) => r.name));
+    needCreate = !EXPECTED_TABLES.every((t) => existing.has(t));
   } catch {
     // 查询失败（如数据库完全损坏），继续尝试建表
+    needCreate = true;
   }
 
-  if (!tablesExist) {
-    // ④ 真正的建表路径（首次部署 / 库被清空时触发）
+  if (needCreate) {
+    // ④ 真正的建表路径（首次部署 / 升级后新增表 / 库被清空时触发）
     // 用 try/catch 处理极端竞态：另一个 Isolate 刚好也在执行 DDL
     try {
       await env.db.batch(SCHEMA_STATEMENTS.map((sql) => env.db.prepare(sql)));
     } catch {
       // 竞态兜底：可能另一个 Isolate 刚建完表。
-      // 再检测一次，确认表存在就算成功
+      // 再检测一次，确认表都存在就算成功
       try {
-        const row: any = await env.db.prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='settings'"
-        ).first();
-        if (!row) throw new Error("schema still missing after DDL attempt");
+        const { results }: any = await env.db.prepare(
+          "SELECT name FROM sqlite_master WHERE type='table'"
+        ).all();
+        const existing = new Set((results ?? []).map((r: any) => r.name));
+        const stillMissing = EXPECTED_TABLES.filter((t) => !existing.has(t));
+        if (stillMissing.length > 0)
+          throw new Error("schema still missing tables after DDL: " + stillMissing.join(", "));
       } catch (e) {
         // 表确实没建起来，重新抛出让上层决定
         throw e;
