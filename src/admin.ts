@@ -995,6 +995,11 @@ export async function handleAdminApi(
       analytics_engine_available: !!env.analytics,
       // UI 主题
       ui_theme: s.uiTheme,
+      // WebDAV
+      webdav_enabled: s.webdavEnabled,
+      webdav_username: s.webdavUsername,
+      webdav_root_path: s.webdavRootPath,
+      webdav_password_configured: !!s.webdavPasswordHash,
     });
   }
 
@@ -1094,6 +1099,26 @@ export async function handleAdminApi(
       const t = body.ui_theme;
       if (t === "light" || t === "dark") {
         patch.ui_theme = t;
+      }
+    }
+
+    // ── WebDAV ──
+    if (typeof body.webdav_enabled === "boolean") patch.webdav_enabled = body.webdav_enabled ? "1" : "0";
+    if (typeof body.webdav_username === "string") {
+      const u = body.webdav_username.trim();
+      if (u) patch.webdav_username = u.slice(0, 64);
+    }
+    if (typeof body.webdav_root_path === "string") {
+      const rp = body.webdav_root_path.trim();
+      patch.webdav_root_path = rp.startsWith("/") ? rp : "/" + rp;
+    }
+    // WebDAV 密码：空字符串 = 清除；"__keep__" 或不传 = 保留；其他 = 重新 hash
+    if (typeof body.webdav_password === "string") {
+      const raw = body.webdav_password;
+      if (raw === "") {
+        patch.webdav_password_hash = "";
+      } else if (raw !== "__keep__") {
+        patch.webdav_password_hash = await hashPassword(raw);
       }
     }
 
