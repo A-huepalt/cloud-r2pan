@@ -162,6 +162,14 @@ const SCHEMA_STATEMENTS: string[] = [
   )`,
 ];
 
+/** 所有预期的业务表 —— 自动建表 & 升级时都要检查 */
+export const EXPECTED_TABLES = [
+  "files", "shares", "direct_links", "download_logs", "login_logs",
+  "turnstile_visits", "banned_ips", "settings", "traffic_stats",
+  "oauth_states", "oauth_providers", "activation_plans", "activation_codes",
+  "directories",
+];
+
 let schemaReady = false;
 
 /**
@@ -248,15 +256,6 @@ export async function ensureSchema(env: Env): Promise<void> {
   if (schemaReady) return;
 
   // ③ 跨 Isolate 安全检测：用 sqlite_master 检查所有预期的表是否都存在
-  //    只检查 settings 不够 —— 如果数据库由旧版本初始化（已有 settings/files/shares），
-  //    后续新增的 direct_links / oauth_providers / directories 等新表会被跳过。
-  //    这里检查所有表，缺任何一个都跑 DDL（CREATE TABLE IF NOT EXISTS 幂等，已有表不会报错）。
-  const EXPECTED_TABLES = [
-    "files", "shares", "direct_links", "download_logs", "login_logs",
-    "turnstile_visits", "banned_ips", "settings", "traffic_stats",
-    "oauth_states", "oauth_providers", "activation_plans", "activation_codes",
-    "directories",
-  ];
   let needCreate = false;
   try {
     const { results }: any = await env.db.prepare(
@@ -303,4 +302,209 @@ export function randomId(len = 12): string {
   const alphabet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const bytes = crypto.getRandomValues(new Uint8Array(len));
   return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
+}
+
+/**
+ * 预期的列（旧版升级数据库可能缺失）—— 用于 getSchemaStatus 检测。
+ * 只列出通过 MIGRATION_STATEMENTS 增量添加的列，CREATE TABLE IF NOT EXISTS 里本来就有的不算。
+ */
+const EXPECTED_COLUMNS: { table: string; column: string }[] = [
+  { table: "shares", column: "password_hash" },
+  { table: "shares", column: "password_cipher" },
+  { table: "shares", column: "download_name" },
+  { table: "shares", column: "is_market" },
+  { table: "shares", column: "market_views" },
+  { table: "shares", column: "market_title" },
+  { table: "shares", column: "market_desc" },
+  { table: "download_logs", column: "activation_code" },
+  { table: "files", column: "path" },
+];
+
+/** 预期的索引（同样是可能缺失的） */
+const EXPECTED_INDEXES: string[] = [
+  "idx_shares_market",
+  "idx_files_path",
+];
+
+export interface SchemaStatus {
+  healthy: boolean;
+  tables: { expected: string[]; existing: string[]; missing: string[] };
+  columns: { table: string; column: string }[]; // 缺失的列
+  indexes: string[]; // 缺失的索引名
+  migration: { current: number; total: number; latest: boolean }; // current 是已执行数量
+  tableCounts: Record<string, number>; // 各表行数（用于诊断）
+}
+
+/**
+ * 查询数据库当前 schema 状态，用于设置页面展示健康状况。
+ */
+export async function getSchemaStatus(env: Env): Promise<SchemaStatus> {
+  if (!env.db) {
+    throw new Error("Database binding 'db' is not configured");
+  }
+
+  // 1. 所有现有表
+  const tablesRes: any = await env.db.prepare(
+    "SELECT name FROM sqlite_master WHERE type='table'"
+  ).all();
+  const existingTables = new Set((tablesRes.results ?? []).map((r: any) => r.name));
+  const missingTables = EXPECTED_TABLES.filter((t) => !existingTables.has(t));
+
+  // 2. 所有现有索引名（只取我们关心的，避免系统索引干扰）
+  const idxRes: any = await env.db.prepare(
+    "SELECT name FROM sqlite_master WHERE type='index' AND name LIKE 'idx_%'"
+  ).all();
+  const existingIndexes = new Set((idxRes.results ?? []).map((r: any) => r.name));
+  const missingIndexes = EXPECTED_INDEXES.filter((i) => !existingIndexes.has(i));
+
+  // 3. 逐表检查缺失的列
+  const missingColumns: { table: string; column: string }[] = [];
+  for (const { table, column } of EXPECTED_COLUMNS) {
+    if (!existingTables.has(table)) continue; // 表都没有了就不用查列了
+    try {
+      const colRes: any = await env.db.prepare(`PRAGMA table_info(${table})`).all();
+      const has = (colRes.results ?? []).some((c: any) => c.name === column);
+      if (!has) missingColumns.push({ table, column });
+    } catch {
+      /* 表不存在等情况，忽略 */
+    }
+  }
+
+  // 4. 迁移版本
+  let migrationCurrent = 0;
+  try {
+    const row: any = await env.db.prepare(
+      "SELECT value FROM settings WHERE key = 'migration_version'"
+    ).first();
+    if (row?.value) migrationCurrent = Number(row.value);
+  } catch { /* settings 表可能不存在 */ }
+  const migrationTotal = MIGRATION_STATEMENTS.length;
+
+  // 5. 各表行数（限制 6 个主要表）
+  const tableCounts: Record<string, number> = {};
+  for (const t of EXPECTED_TABLES) {
+    if (!existingTables.has(t)) continue;
+    try {
+      const r: any = await env.db.prepare(`SELECT COUNT(*) AS c FROM ${t}`).first();
+      tableCounts[t] = r?.c ?? 0;
+    } catch {
+      tableCounts[t] = -1; // 查询失败
+    }
+  }
+
+  const healthy =
+    missingTables.length === 0 &&
+    missingColumns.length === 0 &&
+    missingIndexes.length === 0 &&
+    migrationCurrent >= migrationTotal;
+
+  return {
+    healthy,
+    tables: {
+      expected: EXPECTED_TABLES.slice(),
+      existing: EXPECTED_TABLES.filter((t) => existingTables.has(t)),
+      missing: missingTables,
+    },
+    columns: missingColumns,
+    indexes: missingIndexes,
+    migration: {
+      current: migrationCurrent,
+      total: migrationTotal,
+      latest: migrationCurrent >= migrationTotal,
+    },
+    tableCounts,
+  };
+}
+
+export interface RepairResult {
+  ok: boolean;
+  tablesCreated: string[];
+  columnsAdded: string[];
+  indexesCreated: string[];
+  migrationsRun: number;
+  durationMs: number;
+  finalStatus: SchemaStatus;
+  error?: string;
+}
+
+/**
+ * 强制修复数据库 —— 重置 schemaReady 短路，重新跑完整 ensureSchema。
+ * 即使之前已经 "schemaReady"，也会重新执行建表 + 增量迁移。
+ *
+ * 返回详细的修复摘要，便于前端展示。
+ */
+export async function repairDatabase(env: Env): Promise<RepairResult> {
+  const start = Date.now();
+  const tablesCreated: string[] = [];
+  const columnsAdded: string[] = [];
+  const indexesCreated: string[] = [];
+
+  try {
+    if (!env.db) throw new Error("Database binding 'db' is not configured");
+
+    // 强制让 ensureSchema 重新跑一遍 —— 先把内存短路清掉
+    schemaReady = false;
+
+    // ── Step 1: 先记录修复前缺什么 —— 修复后对比就能知道 "新增了什么" ──
+    const before = await getSchemaStatus(env);
+
+    // ── Step 2: 跑完整 ensureSchema ──
+    await ensureSchema(env);
+
+    // ── Step 3: 再跑一次迁移，确保 migration_version 对齐 ──
+    // （ensureSchema 内部已经跑过 runMigrations，但这里再次调用也幂等）
+    await runMigrations(env);
+
+    // ── Step 4: 记录修复后状态 ──
+    const after = await getSchemaStatus(env);
+
+    // 对比 before / after，算出修复动作
+    tablesCreated.push(...before.tables.missing);
+    for (const c of before.columns) {
+      if (!after.columns.some((x) => x.table === c.table && x.column === c.column)) {
+        columnsAdded.push(`${c.table}.${c.column}`);
+      }
+    }
+    for (const idx of before.indexes) {
+      if (!after.indexes.includes(idx)) indexesCreated.push(idx);
+    }
+
+    const migrationsRun =
+      after.migration.current > before.migration.current
+        ? after.migration.current - before.migration.current
+        : 0;
+
+    return {
+      ok: true,
+      tablesCreated,
+      columnsAdded,
+      indexesCreated,
+      migrationsRun,
+      durationMs: Date.now() - start,
+      finalStatus: after,
+    };
+  } catch (e: any) {
+    // 就算失败也尽量返回最终状态，方便用户排查
+    let finalStatus: SchemaStatus | null = null;
+    try {
+      finalStatus = await getSchemaStatus(env);
+    } catch { /* 数据库可能已经完全挂了 */ }
+    return {
+      ok: false,
+      tablesCreated,
+      columnsAdded,
+      indexesCreated,
+      migrationsRun: 0,
+      durationMs: Date.now() - start,
+      finalStatus: finalStatus ?? ({
+        healthy: false,
+        tables: { expected: EXPECTED_TABLES.slice(), existing: [], missing: EXPECTED_TABLES.slice() },
+        columns: [],
+        indexes: [],
+        migration: { current: 0, total: 0, latest: false },
+        tableCounts: {},
+      }),
+      error: String(e?.message ?? e),
+    };
+  }
 }

@@ -583,6 +583,33 @@ const I18N = {
     oauthAddTitle: '添加 OAuth2 Provider',
     oauthLabel: '显示名称',
     oauthKeepSecret: '保持现有 Secret 不变',
+    // 数据库工具
+    dbToolsTitle: '🧰 数据库健康',
+    dbToolsD: '自动检测表、列、索引和迁移版本是否完整。旧版本升级后如果新功能缺失，点"修复"让数据库同步到最新 schema。',
+    dbHealthy: '✓ 数据库结构完整',
+    dbNeedRepair: '⚠ 检测到 schema 异常',
+    dbTables: '表结构',
+    dbColumns: '缺失的列',
+    dbIndexes: '缺失的索引',
+    dbMigration: '迁移进度',
+    dbTablesOk: '{a} / {b} 表就绪',
+    dbMissingCount: '缺 {n} 项',
+    dbRepairBtn: '🔧 修复数据库',
+    dbRepairConfirmT: '修复数据库 schema？',
+    dbRepairConfirmD: '将自动创建缺失的表、补上缺失的列和索引、重跑未执行的迁移。此操作不会删除任何现有数据。',
+    dbRepairing: '正在修复数据库…',
+    dbRepairOk: '数据库修复完成 ✅',
+    dbRepairFail: '数据库修复失败',
+    dbRepairDetailTables: '创建表',
+    dbRepairDetailCols: '补列',
+    dbRepairDetailIdx: '索引',
+    dbRepairDetailMigrations: '迁移',
+    dbRepairDetailTime: '耗时',
+    dbStatusRefresh: '刷新状态',
+    dbStatusMissingTables: '缺失的表',
+    dbStatusMissingCols: '缺失的列',
+    dbStatusMissingIdx: '缺失的索引',
+    dbTableRows: '表行数',
     confirmDeleteTitle: '确认删除',
     confirmOAuthDeleteD: '删除后此 Provider 的配置将永久删除。已生成的 OAuth2 会话不受影响，但新登录请求将无法使用此 Provider。确定删除吗？',
     custom: '自定义',
@@ -881,6 +908,33 @@ const I18N = {
     oauthAddTitle: 'Add OAuth2 Provider',
     oauthLabel: 'Display Name',
     oauthKeepSecret: 'Keep existing secret unchanged',
+    // Database tools
+    dbToolsTitle: '🧰 Database Health',
+    dbToolsD: 'Auto-check whether tables, columns, indexes and migrations are complete. After an upgrade from an older version, click "Repair" to sync the DB to the latest schema.',
+    dbHealthy: '✓ Schema is complete',
+    dbNeedRepair: '⚠ Schema issue detected',
+    dbTables: 'Tables',
+    dbColumns: 'Missing columns',
+    dbIndexes: 'Missing indexes',
+    dbMigration: 'Migration progress',
+    dbTablesOk: '{a} / {b} tables ready',
+    dbMissingCount: '{n} missing',
+    dbRepairBtn: '🔧 Repair Database',
+    dbRepairConfirmT: 'Repair database schema?',
+    dbRepairConfirmD: 'This will create missing tables, add missing columns/indexes and re-run pending migrations. No existing data will be deleted.',
+    dbRepairing: 'Repairing database…',
+    dbRepairOk: 'Database repair complete ✅',
+    dbRepairFail: 'Database repair failed',
+    dbRepairDetailTables: 'Tables created',
+    dbRepairDetailCols: 'Columns added',
+    dbRepairDetailIdx: 'Indexes',
+    dbRepairDetailMigrations: 'Migrations',
+    dbRepairDetailTime: 'Duration',
+    dbStatusRefresh: 'Refresh status',
+    dbStatusMissingTables: 'Missing tables',
+    dbStatusMissingCols: 'Missing columns',
+    dbStatusMissingIdx: 'Missing indexes',
+    dbTableRows: 'Row counts',
     confirmDeleteTitle: 'Confirm Delete',
     confirmOAuthDeleteD: 'This provider config will be permanently deleted. Existing OAuth sessions remain valid, but new login requests cannot use this provider. Are you sure?',
     custom: 'Custom',
@@ -2415,9 +2469,10 @@ async function loadCodesList(){
 
 /* ═══════════ 设置 ═══════════ */
 async function loadSettings(){
-  const [s, twofaStatus] = await Promise.all([
+  const [s, twofaStatus, dbStatus] = await Promise.all([
     api('/api/admin/settings'),
     api('/api/admin/2fa/status').catch(() => ({enabled:false, cloudflare_recovery:false, recovery_remaining:0})),
+    api('/api/admin/db/status').catch(() => null),
   ]);
   $('#view').innerHTML = `
     <div class="glass group">
@@ -2590,7 +2645,85 @@ async function loadSettings(){
         <button class="btn primary" id="oauth-add" style="padding:10px 20px;font-size:13px;border-radius:14px">+ ${esc(t('oauthAddProvider'))}</button>
       </div>
     </div>
+    <!-- 数据库健康 -->
+    <div class="glass group">
+      <div class="row" style="align-items:flex-start">
+        <div class="info" style="flex:1">
+          <div class="t">${esc(t('dbToolsTitle'))}</div>
+          <div class="d" style="font-size:12px;line-height:1.6;margin-top:2px">${esc(t('dbToolsD'))}</div>
+        </div>
+        ${dbStatus ? (dbStatus.healthy
+          ? `<span class="tag active"><i></i>${esc(t('dbHealthy'))}</span>`
+          : `<span class="tag" style="background:rgba(255,159,10,.16);color:#fcd34d"><i></i>${esc(t('dbNeedRepair'))}</span>`
+        ) : `<span class="tag" style="background:rgba(255,255,255,.1);color:#a5b4fc"><i></i>—</span>`}
+      </div>
+      ${dbStatus ? `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:8px">
+          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbTables'))}</div>
+            <div style="font-size:14px;font-weight:600">${esc(t('dbTablesOk',{a:dbStatus.tables.existing.length,b:dbStatus.tables.expected.length}))}</div>
+            ${dbStatus.tables.missing.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${esc(t('dbStatusMissingTables'))}: ${dbStatus.tables.missing.join(', ')}</div>` : ''}
+          </div>
+          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbColumns'))}</div>
+            <div style="font-size:14px;font-weight:600;color:${dbStatus.columns.length ? '#fcd34d' : '#6ee7b7'}">${dbStatus.columns.length ? esc(t('dbMissingCount',{n:dbStatus.columns.length})) : '✓'}</div>
+            ${dbStatus.columns.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${dbStatus.columns.map(c=>c.table+'.'+c.column).join(', ')}</div>` : ''}
+          </div>
+          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbIndexes'))}</div>
+            <div style="font-size:14px;font-weight:600;color:${dbStatus.indexes.length ? '#fcd34d' : '#6ee7b7'}">${dbStatus.indexes.length ? esc(t('dbMissingCount',{n:dbStatus.indexes.length})) : '✓'}</div>
+            ${dbStatus.indexes.length ? `<div style="font-size:11.5px;color:#fda293;margin-top:3px">${dbStatus.indexes.join(', ')}</div>` : ''}
+          </div>
+          <div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">${esc(t('dbMigration'))}</div>
+            <div style="font-size:14px;font-weight:600;color:${dbStatus.migration.latest ? '#6ee7b7' : '#fcd34d'}">${dbStatus.migration.current} / ${dbStatus.migration.total}</div>
+          </div>
+        </div>
+        ${Object.keys(dbStatus.tableCounts).length ? `
+          <details style="margin-top:10px">
+            <summary style="cursor:pointer;font-size:12px;color:var(--text-3);user-select:none">${esc(t('dbTableRows'))}</summary>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+              ${Object.entries(dbStatus.tableCounts).map(([t,c]) => `<span style="font-size:11.5px;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,.07);font-family:ui-monospace,'SF Mono',monospace;color:var(--text-2)">${t}: ${c}</span>`).join('')}
+            </div>
+          </details>` : ''}
+      ` : `<div style="font-size:12px;color:#fda293;margin-top:8px">—</div>`}
+      <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
+        <button class="btn sm" id="db-refresh">${esc(t('dbStatusRefresh'))}</button>
+        <button class="btn sm ${dbStatus && dbStatus.healthy ? '' : 'primary'}" id="db-repair">${esc(t('dbRepairBtn'))}</button>
+      </div>
+    </div>
     <button class="btn primary" id="st-save" style="padding:14px 28px;font-size:15px;border-radius:18px">${esc(t('save'))}</button>`;
+
+  // ── 数据库工具按钮 ──
+  $('#db-refresh')?.addEventListener('click', () => loadSettings());
+  $('#db-repair')?.addEventListener('click', async () => {
+    if (!(await confirmDialog(t('dbRepairConfirmT'), t('dbRepairConfirmD')))) return;
+    const btn = $('#db-repair');
+    const orig = btn.textContent;
+    btn.textContent = t('dbRepairing');
+    btn.disabled = true;
+    try {
+      const r = await api('/api/admin/db/repair', { method: 'POST' });
+      if (r.ok) {
+        // 构造详细描述
+        const parts = [];
+        if (r.tablesCreated.length) parts.push(`${t('dbRepairDetailTables')} ${r.tablesCreated.length}`);
+        if (r.columnsAdded.length)   parts.push(`${t('dbRepairDetailCols')} ${r.columnsAdded.length}`);
+        if (r.indexesCreated.length) parts.push(`${t('dbRepairDetailIdx')} ${r.indexesCreated.length}`);
+        if (r.migrationsRun)         parts.push(`${t('dbRepairDetailMigrations')} ${r.migrationsRun}`);
+        parts.push(`${t('dbRepairDetailTime')} ${r.durationMs}ms`);
+        toast(t('dbRepairOk') + (parts.length ? ` · ${parts.join(' · ')}` : ''), 'ok');
+      } else {
+        toast(t('dbRepairFail') + (r.error ? ': ' + r.error : ''), 'err');
+      }
+    } catch (e) {
+      toast(t('dbRepairFail') + ': ' + (e.message || e), 'err');
+    } finally {
+      btn.textContent = orig;
+      btn.disabled = false;
+      loadSettings(); // 刷新状态
+    }
+  });
 
   $('#st-reset-traffic')?.addEventListener('click', async () => {
     if(!(await confirmDialog(t('confirmResetT'), t('confirmResetD'), false))) return;

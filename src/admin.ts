@@ -1,5 +1,5 @@
 import type { Env } from "./types";
-import { ensureSchema, randomId } from "./db";
+import { ensureSchema, randomId, getSchemaStatus, repairDatabase } from "./db";
 import { generateCodes, makeBatchId, formatCodeStatus, findCodeByString } from "./codes";
 import { getSettings, updateSettings } from "./settings";
 import { checkAdminKey, createSession, verifySession, clientIp, rateLimitLogin, requireAdminIp } from "./auth";
@@ -1657,6 +1657,22 @@ export async function handleAdminApi(
       // Analytics Engine 绑定后，下次部署可以升级为经纬度精确查询
       geo_source: "d1_download_logs",
     });
+  }
+
+  // ─══════════════════════════════════════════════════════════
+  //   数据库工具（设置页 —— 诊断 & 修复）
+  // ─══════════════════════════════════════════════════════════
+
+  // GET /api/admin/db/status —— 返回数据库当前 schema 健康状况
+  if (path === "/api/admin/db/status" && method === "GET") {
+    const status = await getSchemaStatus(env);
+    return json(status);
+  }
+
+  // POST /api/admin/db/repair —— 强制跑 ensureSchema + 增量迁移
+  if (path === "/api/admin/db/repair" && method === "POST") {
+    const result = await repairDatabase(env);
+    return json(result);
   }
 
   return json({ error: "not_found" }, 404);
