@@ -38,7 +38,9 @@ body {
 
 /* ── 布局 ─────────────────────────────── */
 #app { position: relative; z-index: 1; }
-.wrap { max-width: 1060px; margin: 0 auto; padding: 20px clamp(14px, 3vw, 28px) 60px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 20px clamp(14px, 3vw, 28px) 60px; }
+.layout { display: flex; gap: 20px; align-items: flex-start; }
+.layout #view { flex: 1; min-width: 0; }
 
 /* ── 玻璃卡片 ─────────────────────────── */
 .glass {
@@ -78,22 +80,61 @@ body {
 .traffic-pill.danger .bar i { background: linear-gradient(90deg,#fbbf24,#ff453a); }
 .traffic-pill.danger { color: #ffb3ae; }
 
-/* ── 分段控制 ─────────────────────────── */
-.seg {
-  display: flex; gap: 4px; padding: 4px; margin-bottom: 22px; border-radius: 18px;
-  background: rgba(255,255,255,.08); border: 1px solid var(--stroke);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  overflow-x: auto; scrollbar-width: none;
+/* ── 侧边栏导航 ────────────────────────── */
+.sidebar {
+  flex: none; width: 188px; padding: 14px 10px;
+  background: linear-gradient(150deg, rgba(255,255,255,.11), rgba(255,255,255,.04));
+  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid var(--stroke-strong); border-radius: 22px;
+  box-shadow: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  display: flex; flex-direction: column; gap: 4px; position: sticky; top: 90px;
+  max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin;
 }
-.seg::-webkit-scrollbar { display: none; }
-.seg button {
-  flex: 1; white-space: nowrap; padding: 9px 18px; border: none; border-radius: 14px;
-  background: transparent; color: var(--text-2); font-size: 14px; font-weight: 600;
-  font-family: inherit; cursor: pointer; transition: all .2s;
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 3px; }
+.sb-main {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 14px; cursor: pointer;
+  color: var(--text-2); font-size: 14px; font-weight: 600;
+  background: transparent; border: none; font-family: inherit; text-align: left;
+  transition: all .22s; width: 100%; user-select: none;
 }
-.seg button.active {
-  color: #fff; background: rgba(255,255,255,.16);
-  box-shadow: 0 4px 14px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);
+.sb-main:hover { background: rgba(255,255,255,.09); color: #fff; }
+.sb-main .ic { font-size: 17px; width: 22px; text-align: center; flex: none; }
+.sb-main .chev { margin-left: auto; font-size: 10px; opacity: .5; transition: transform .25s; }
+.sb-main.open { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); }
+.sb-main.open .chev { transform: rotate(90deg); opacity: .8; }
+.sb-main.single .chev { display: none; }
+.sb-sub {
+  overflow: hidden; max-height: 0; transition: max-height .35s cubic-bezier(.22,1,.36,1);
+  display: flex; flex-direction: column; gap: 2px; padding-left: 24px;
+}
+.sb-sub.open { max-height: 400px; }
+.sb-sub button {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; border-radius: 10px; cursor: pointer;
+  color: var(--text-3); font-size: 13px; font-weight: 500;
+  background: transparent; border: none; font-family: inherit; text-align: left;
+  transition: all .18s; width: 100%; user-select: none;
+}
+.sb-sub button:hover { color: #fff; background: rgba(255,255,255,.08); }
+.sb-sub button.active {
+  color: #fff; background: rgba(10,132,255,.22);
+  box-shadow: inset 2px 0 0 #0a84ff, inset 0 1px 0 rgba(255,255,255,.18);
+  font-weight: 600;
+}
+
+/* ── 移动端折叠 ───────────────────────── */
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    position: static; width: 100%; max-height: none;
+    flex-direction: row; flex-wrap: wrap; gap: 6px;
+    padding: 10px;
+  }
+  .sb-main { padding: 7px 12px; font-size: 13px; }
+  .sb-main .chev { display: none; }
+  .sb-sub { display: none; }
 }
 
 /* ── 统计卡片 ─────────────────────────── */
@@ -327,6 +368,7 @@ const I18N = {
     loginSubtitle: '管理后台 · 请输入管理密钥登录', keyPlaceholder: '管理密钥 (admin)',
     // 标签
     tabOverview: '概览', tabFiles: '文件', tabShares: '分享', tabDirect: '直链', tabLogs: '记录', tabBans: '封禁', tabGlobal: '全球分布', tabSecurity: '安全', tabSettings: '设置',
+    navContent: '内容管理', navAnalytics: '运营分析', navSecurity: '安全中心', navSystem: '系统设置',
     // 概览
     statTraffic: '本月流量', usedPercent: '已用 {n}% · 跨月自动重置', noLimit: '未设置限额',
     statDownloads: '累计下载', todayN: '今日 {n} 次', statFiles: '文件总数', storedR2: '存储于 R2 对象存储',
@@ -625,6 +667,7 @@ const I18N = {
     loginSubtitle: 'Admin console · Enter your admin key to continue', keyPlaceholder: 'Admin key (admin)',
     // 标签
     tabOverview: 'Overview', tabFiles: 'Files', tabShares: 'Shares', tabDirect: 'Direct', tabLogs: 'Logs', tabBans: 'Bans', tabGlobal: 'Global', tabSecurity: 'Security', tabSettings: 'Settings',
+    navContent: 'Content', navAnalytics: 'Analytics', navSecurity: 'Security', navSystem: 'System',
     // 概览
     statTraffic: 'Monthly Traffic', usedPercent: '{n}% used · resets monthly', noLimit: 'No limit set',
     statDownloads: 'Total Downloads', todayN: '{n} today', statFiles: 'Files', storedR2: 'Stored in R2 object storage',
@@ -1150,8 +1193,36 @@ function renderLoginCard(bodyHtml){
   </div>`;
 }
 
+/* ═══════════ 侧边栏导航配置 ═══════════ */
+const NAV_GROUPS = [
+  { key: 'overview', ic: '📊', label: () => t('tabOverview'), tab: 'overview' },
+  { key: 'content', ic: '📦', label: () => t('navContent'), subs: [
+      { tab: 'files',   label: () => t('tabFiles'),   ic: '📁' },
+      { tab: 'shares',  label: () => t('tabShares'),  ic: '🔗' },
+      { tab: 'direct',  label: () => t('tabDirect'),  ic: '⚡' },
+    ]},
+  { key: 'analytics', ic: '📈', label: () => t('navAnalytics'), subs: [
+      { tab: 'logs',   label: () => t('tabLogs'),   ic: '📋' },
+      { tab: 'global', label: () => t('tabGlobal'), ic: '🌍' },
+    ]},
+  { key: 'security', ic: '🛡️', label: () => t('navSecurity'), subs: [
+      { tab: 'bans',    label: () => t('tabBans'),    ic: '🚫' },
+      { tab: 'security',label: () => t('tabSecurity'),ic: '🔒' },
+    ]},
+  { key: 'system', ic: '⚙️', label: () => t('navSystem'), subs: [
+      { tab: 'codes',    label: () => t('tabCodes'),    ic: '🎟️' },
+      { tab: 'settings', label: () => t('tabSettings'), ic: '⚙️' },
+    ]},
+];
+const TAB_TO_GROUP = {};
+NAV_GROUPS.forEach(g => {
+  if (g.tab) TAB_TO_GROUP[g.tab] = g.key;
+  if (g.subs) g.subs.forEach(s => TAB_TO_GROUP[s.tab] = g.key);
+});
+
 /* ═══════════ 主应用 ═══════════ */
 let currentTab = 'overview';
+let openGroup = 'overview'; // 当前展开的侧边栏分组
 let logsPage = 1, logsQuery = '';
 
 async function showApp(){
@@ -1161,6 +1232,26 @@ async function showApp(){
     siteTitle = s.site_title || siteTitle;
   }catch{}
   document.title = t('docTitle', {site: siteTitle});
+
+  // 渲染侧边栏
+  const sidebarHtml = NAV_GROUPS.map(g => {
+    const isSingle = !g.subs;
+    const active = (isSingle && currentTab === g.tab) || TAB_TO_GROUP[currentTab] === g.key;
+    const subHtml = g.subs ? `
+      <div class="sb-sub ${active ? 'open' : ''}" data-sub="${g.key}">
+        ${g.subs.map(s => `
+          <button data-tab="${s.tab}" class="${currentTab === s.tab ? 'active' : ''}">
+            <span class="ic">${s.ic}</span>${esc(s.label())}
+          </button>`).join('')}
+      </div>` : '';
+    return `
+      <button class="sb-main ${active ? 'open' : ''} ${isSingle ? 'single' : ''}" data-group="${g.key}" data-tab="${g.tab || ''}">
+        <span class="ic">${g.ic}</span>${esc(g.label())}
+        ${g.subs ? '<span class="chev">▶</span>' : ''}
+      </button>
+      ${subHtml}`;
+  }).join('');
+
   $('#app').innerHTML = `
   <div class="wrap">
     <div class="topbar">
@@ -1174,33 +1265,70 @@ async function showApp(){
       <button class="btn sm" id="lang-btn">${esc(t('switchTo'))}</button>
       <button class="btn sm" id="logout-btn">${esc(t('logout'))}</button>
     </div>
-    <div class="seg" id="tabs">
-      <button data-tab="overview" class="active">${esc(t('tabOverview'))}</button>
-      <button data-tab="files">${esc(t('tabFiles'))}</button>
-      <button data-tab="shares">${esc(t('tabShares'))}</button>
-      <button data-tab="direct">${esc(t('tabDirect'))}</button>
-      <button data-tab="logs">${esc(t('tabLogs'))}</button>
-      <button data-tab="bans">${esc(t('tabBans'))}</button>
-      <button data-tab="global">${esc(t('tabGlobal'))}</button>
-      <button data-tab="codes">${esc(t('tabCodes'))}</button>
-      <button data-tab="security">${esc(t('tabSecurity'))}</button>
-      <button data-tab="settings">${esc(t('tabSettings'))}</button>
+    <div class="layout">
+      <nav class="sidebar" id="sidebar">${sidebarHtml}</nav>
+      <div id="view"></div>
     </div>
-    <div id="view"></div>
   </div>`;
-  $$('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+  // 绑定侧边栏事件
+  $('#sidebar').addEventListener('click', e => {
+    const main = e.target.closest('.sb-main');
+    if (main) {
+      const gKey = main.dataset.group;
+      const tab = main.dataset.tab;
+      if (tab) {
+        // 叶子节点（如 overview）：直接切换
+        switchTab(tab);
+      } else {
+        // 有子菜单的：切换展开/收起
+        const sub = $('#sidebar .sb-sub[data-sub="' + gKey + '"]');
+        main.classList.toggle('open');
+        sub?.classList.toggle('open');
+        openGroup = main.classList.contains('open') ? gKey : null;
+      }
+      return;
+    }
+    const subBtn = e.target.closest('.sb-sub button[data-tab]');
+    if (subBtn) switchTab(subBtn.dataset.tab);
+  });
+
   $('#logout-btn').onclick = async () => { await api('/api/admin/logout', {method:'POST'}); showLogin(); };
   $('#traffic-pill').onclick = () => switchTab('settings');
   $('#lang-btn').onclick = toggleLang;
   switchTab('overview');
 }
 
+/* Tab → loadXxx 函数映射 */
+const TAB_LOADERS = {
+  overview: loadOverview, files: loadFiles, shares: loadShares,
+  direct: loadDirectLinks, logs: loadLogs, bans: loadBans,
+  global: loadGlobal, codes: loadCodes, security: loadSecurity, settings: loadSettings,
+};
+
 function switchTab(tab){
   currentTab = tab;
-  $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  openGroup = TAB_TO_GROUP[tab] || tab;
+  // 更新侧边栏高亮 & 展开
+  const sidebar = $('#sidebar');
+  if (sidebar) {
+    sidebar.querySelectorAll('.sb-main').forEach(m => {
+      const gKey = m.dataset.group;
+      const g = NAV_GROUPS.find(g => g.key === gKey);
+      const isSingle = !g.subs;
+      const isActive = (isSingle && g.tab === tab) || TAB_TO_GROUP[tab] === gKey;
+      m.classList.toggle('open', isActive);
+      m.classList.toggle('active', isActive && isSingle);
+      const sub = sidebar.querySelector('.sb-sub[data-sub="' + gKey + '"]');
+      if (sub) sub.classList.toggle('open', isActive);
+    });
+    sidebar.querySelectorAll('.sb-sub button[data-tab]').forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === tab)
+    );
+  }
   const v = $('#view');
   v.innerHTML = '<div class="spin"></div>';
-  ({ overview: loadOverview, files: loadFiles, shares: loadShares, direct: loadDirectLinks, logs: loadLogs, bans: loadBans, global: loadGlobal, codes: loadCodes, security: loadSecurity, settings: loadSettings })[tab]().catch(e => {
+  (TAB_LOADERS[tab] || (() => Promise.resolve()))().catch(e => {
     v.innerHTML = `<div class="glass section"><div class="empty"><div class="icon">⚠️</div>${esc(e.message === 'unauthorized' ? t('loadingErr') : e.message)}</div></div>`;
   });
 }
