@@ -263,8 +263,9 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
   // 直链 /d/:id —— 独立入口，走 direct_links 表
   // 与分享链接 /s/:id 是完全独立的 API、独立的 token、独立的鉴权
   // 创建直链: POST /api/admin/direct-links
+  // URL 格式：/d/{token}  或  /d/{token}/{filename}（带文件名后缀，向下兼容）
   // ══════════════════════════════════════════════════════════════
-  const directMatch = /^\/d\/([A-Za-z0-9]+)$/.exec(path);
+  const directMatch = /^\/d\/([A-Za-z0-9]+)(?:\/.*)?$/.exec(path);
   if (directMatch) {
     if (req.method !== "GET" && req.method !== "HEAD") {
       return new Response("Method Not Allowed", { status: 405 });

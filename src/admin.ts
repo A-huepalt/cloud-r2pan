@@ -50,6 +50,14 @@ function sanitizeName(name: string): string {
   return cleaned || "unnamed";
 }
 
+/** 生成带文件名后缀的直链 URL：/d/{token}/{filename}，文件名做 URL 编码 */
+function buildDirectUrl(token: string, fileName?: string | null, downloadName?: string | null): string {
+  const displayName = downloadName?.trim() || fileName?.trim();
+  if (!displayName) return `/d/${token}`;
+  const safe = displayName.replace(/[\\/]/g, "_");
+  return `/d/${token}/${encodeURIComponent(safe)}`;
+}
+
 async function requireAuth(req: Request, env: Env): Promise<Response | null> {
   if (!(await verifySession(req, env))) {
     return json({ error: "unauthorized" }, 401);
@@ -794,7 +802,7 @@ export async function handleAdminApi(
       notes?: string | null;
     }>(req);
     if (!body.file_id) return json({ error: msg(req, "缺少 file_id", "Missing file_id") }, 400);
-    const file = await env.db.prepare("SELECT id FROM files WHERE id = ?1").bind(body.file_id).first();
+    const file = await env.db.prepare("SELECT id, name FROM files WHERE id = ?1").bind(body.file_id).first<{ id: string; name: string }>();
     if (!file) return json({ error: msg(req, "文件不存在", "File not found") }, 404);
     const expiresAt =
       body.expires_hours && body.expires_hours > 0 ? Date.now() + body.expires_hours * 3600_000 : null;
@@ -811,7 +819,7 @@ export async function handleAdminApi(
     )
       .bind(id, body.file_id, Date.now(), expiresAt, maxDownloads, downloadName, notes)
       .run();
-    return json({ ok: true, id, url: `/d/${id}` }, 201);
+    return json({ ok: true, id, url: buildDirectUrl(id, file.name, downloadName) }, 201);
   }
 
   // ── 直链列表 ──
@@ -834,7 +842,7 @@ export async function handleAdminApi(
     const now = Date.now();
     const list = (results ?? []).map((dl: any) => ({
       ...dl,
-      url: `/d/${dl.id}`,
+      url: buildDirectUrl(dl.id, dl.file_name, dl.download_name),
       status: dl.revoked
         ? "revoked"
         : dl.expires_at && dl.expires_at < now
@@ -861,7 +869,7 @@ export async function handleAdminApi(
         .bind(dlId)
         .first();
       if (!row) return json({ error: msg(req, "直链不存在", "Direct link not found") }, 404);
-      return json({ ...row, url: `/d/${(row as any).id}` });
+      return json({ ...row, url: buildDirectUrl((row as any).id, (row as any).file_name, (row as any).download_name) });
     }
 
     if (method === "PUT") {
