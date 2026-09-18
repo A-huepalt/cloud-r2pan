@@ -123,7 +123,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
   min-height: 100vh; color: var(--text); position: relative; overflow-x: hidden;
   background: var(--bg-page);
   background-attachment: fixed;
@@ -506,7 +506,7 @@ const I18N = {
     // 登录
     loginSubtitle: '管理后台 · 请输入管理密钥登录', keyPlaceholder: '管理密钥 (admin)',
     // 标签
-    tabOverview: '概览', tabFiles: '文件', tabShares: '分享', tabDirect: '直链', tabLogs: '记录', tabBans: '封禁', tabGlobal: '全球分布', tabSecurity: '安全', tabSettings: '设置',
+    tabOverview: '概览', tabFiles: '文件', tabShares: '分享', tabDirect: '直链', tabLogs: '记录', tabBans: '封禁', tabGlobal: '全球分布', tabSecurity: '安全', tabSettings: '设置', tabWebDAV: 'WebDAV',
     navContent: '内容管理', navAnalytics: '运营分析', navSecurity: '安全中心', navSystem: '系统设置',
     // 概览
     statTraffic: '本月流量', usedPercent: '已用 {n}% · 跨月自动重置', noLimit: '未设置限额',
@@ -851,7 +851,7 @@ const I18N = {
     // 登录
     loginSubtitle: 'Admin console · Enter your admin key to continue', keyPlaceholder: 'Admin key (admin)',
     // 标签
-    tabOverview: 'Overview', tabFiles: 'Files', tabShares: 'Shares', tabDirect: 'Direct', tabLogs: 'Logs', tabBans: 'Bans', tabGlobal: 'Global', tabSecurity: 'Security', tabSettings: 'Settings',
+    tabOverview: 'Overview', tabFiles: 'Files', tabShares: 'Shares', tabDirect: 'Direct', tabLogs: 'Logs', tabBans: 'Bans', tabGlobal: 'Global', tabSecurity: 'Security', tabSettings: 'Settings', tabWebDAV: 'WebDAV',
     navContent: 'Content', navAnalytics: 'Analytics', navSecurity: 'Security', navSystem: 'System',
     // 概览
     statTraffic: 'Monthly Traffic', usedPercent: '{n}% used · resets monthly', noLimit: 'No limit set',
@@ -1442,6 +1442,7 @@ const NAV_GROUPS = [
     ]},
   { key: 'system', ic: '⚙️', label: () => t('navSystem'), subs: [
       { tab: 'codes',    label: () => t('tabCodes'),    ic: '🎟️' },
+      { tab: 'webdav',   label: () => t('tabWebDAV'),  ic: '🗂️' },
       { tab: 'settings', label: () => t('tabSettings'), ic: '⚙️' },
     ]},
 ];
@@ -1536,7 +1537,7 @@ async function showApp(){
 const TAB_LOADERS = {
   overview: loadOverview, files: loadFiles, shares: loadShares,
   direct: loadDirectLinks, logs: loadLogs, bans: loadBans,
-  global: loadGlobal, codes: loadCodes, security: loadSecurity, settings: loadSettings,
+  global: loadGlobal, codes: loadCodes, security: loadSecurity, webdav: loadWebDAV, settings: loadSettings,
 };
 
 function switchTab(tab){
@@ -2646,6 +2647,120 @@ async function loadCodesList(){
   } catch(err) { toast(err.message, 'err'); }
 }
 
+/* ═══════════ WebDAV ═══════════ */
+async function loadWebDAV(){
+  const s = await api('/api/admin/settings');
+  const v = $('#view');
+  v.innerHTML = `
+    <div class="glass section">
+      <div class="section-title">
+        <h2>🗂️ ${esc(t('webdavGroupTitle'))}</h2>
+      </div>
+      <div class="sub" style="color:var(--text-2);font-size:13px;margin-bottom:14px">${esc(t('webdavGroupD'))}</div>
+
+      <!-- 状态概览 -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:18px">
+        <div style="background:var(--sf-soft);border-radius:14px;padding:14px;border:1px solid var(--stroke)">
+          <div style="color:var(--text-3);font-size:12px">${esc(t('webdavEnable'))}</div>
+          <div style="font-size:18px;font-weight:600;margin-top:4px;color:${s.webdav_enabled ? '#16a34a' : '#9ca3af'}">${s.webdav_enabled ? (LANG==='zh'?'已启用':'Enabled') : (LANG==='zh'?'未启用':'Disabled')}</div>
+        </div>
+        <div style="background:var(--sf-soft);border-radius:14px;padding:14px;border:1px solid var(--stroke)">
+          <div style="color:var(--text-3);font-size:12px">${esc(t('webdavUsername'))}</div>
+          <div style="font-size:18px;font-weight:600;margin-top:4px">${esc(s.webdav_username || 'webdav')}</div>
+        </div>
+        <div style="background:var(--sf-soft);border-radius:14px;padding:14px;border:1px solid var(--stroke)">
+          <div style="color:var(--text-3);font-size:12px">${esc(t('webdavPassword'))}</div>
+          <div style="font-size:18px;font-weight:600;margin-top:4px;color:${s.webdav_password_configured ? '#16a34a' : '#d97706'}">${s.webdav_password_configured ? '✓ ' + esc(t('webdavPasswordSet')) : '⚠ ' + esc(t('webdavPasswordUnset'))}</div>
+        </div>
+        <div style="background:var(--sf-soft);border-radius:14px;padding:14px;border:1px solid var(--stroke)">
+          <div style="color:var(--text-3);font-size:12px">${esc(t('webdavRootPath'))}</div>
+          <div style="font-size:18px;font-weight:600;margin-top:4px;font-family:ui-monospace,'SF Mono',monospace">${esc(s.webdav_root_path || '/')}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 配置卡片 -->
+    <div class="glass section">
+      <h3 style="margin:0 0 4px;font-size:15px;font-weight:600">${esc(t('webdavGroupTitle'))}</h3>
+      <div style="color:var(--text-3);font-size:12.5px;margin-bottom:14px">${esc(t('webdavGroupD'))}</div>
+
+      <div class="row" style="padding:14px 0;border:none;border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="info" style="flex:1;min-width:0">
+          <div class="t" style="font-size:14.5px;font-weight:600">${esc(t('webdavEnable'))}</div>
+          <div class="d" style="margin-top:3px;font-size:12.5px;color:var(--text-3);line-height:1.5">${LANG==='zh'?'开启后，可通过 WebDAV 客户端访问以下地址':'Once enabled, connect to the URL below from any WebDAV client'}</div>
+        </div>
+        <label class="switch" style="flex:none">
+          <input type="checkbox" id="wd-enable" ${s.webdav_enabled?'checked':''}>
+          <span class="track"><span class="thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row" style="padding:14px 0;border:none;border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="info" style="flex:1;min-width:0">
+          <div class="t" style="font-size:14.5px;font-weight:600">${esc(t('webdavUsername'))}</div>
+        </div>
+        <input type="text" id="wd-username" value="${esc(s.webdav_username ?? 'webdav')}" style="width:200px;padding:9px 14px;border-radius:12px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:14px;font-family:inherit;outline:none">
+      </div>
+
+      <div class="row" style="padding:14px 0;border:none;border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="info" style="flex:1;min-width:0">
+          <div class="t" style="font-size:14.5px;font-weight:600">${esc(t('webdavPassword'))}</div>
+          <div class="d" style="margin-top:3px;font-size:12.5px;color:var(--text-3);line-height:1.5">${s.webdav_password_configured ? '<span style="color:#16a34a">✓ '+esc(t('webdavPasswordSet'))+'</span>' : '<span style="color:#d97706">⚠ '+esc(t('webdavPasswordUnset'))+'</span>'}</div>
+        </div>
+        <input type="password" id="wd-password" value="" placeholder="${esc(t('webdavPasswordPh'))}" style="width:220px;padding:9px 14px;border-radius:12px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:14px;font-family:ui-monospace,'SF Mono',monospace;outline:none">
+      </div>
+
+      <div class="row" style="padding:14px 0;border:none;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="info" style="flex:1;min-width:0">
+          <div class="t" style="font-size:14.5px;font-weight:600">${esc(t('webdavRootPath'))}</div>
+          <div class="d" style="margin-top:3px;font-size:12.5px;color:var(--text-3);line-height:1.5">${esc(t('webdavRootPathHelp'))}</div>
+        </div>
+        <input type="text" id="wd-root" value="${esc(s.webdav_root_path ?? '/')}" style="width:200px;padding:9px 14px;border-radius:12px;background:var(--sf-input);border:1px solid var(--stroke-strong);color:var(--text);font-size:14px;font-family:ui-monospace,'SF Mono',monospace;outline:none">
+      </div>
+    </div>
+
+    <!-- WebDAV 地址 -->
+    <div class="glass section">
+      <h3 style="margin:0 0 4px;font-size:15px;font-weight:600">${esc(t('webdavUrl'))}</h3>
+      <div style="color:var(--text-3);font-size:12.5px;margin-bottom:14px">${esc(t('webdavUrlHint'))}</div>
+      <div style="padding:14px 16px;border-radius:14px;background:var(--sf-soft);border:1px solid var(--stroke);font-family:ui-monospace,'SF Mono',monospace;font-size:13px;color:var(--blue);word-break:break-all;cursor:pointer" onclick="this.select()">${esc(window.location.origin)}/webdav${s.webdav_root_path && s.webdav_root_path !== '/' ? esc(s.webdav_root_path) : ''}/</div>
+    </div>
+
+    <!-- 保存按钮 -->
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" id="wd-clear" style="padding:12px 22px;font-size:14px;border-radius:14px">${esc(t('webdavPasswordClear'))}</button>
+      <button class="btn primary" id="wd-save" style="padding:12px 28px;font-size:14px;border-radius:14px">${esc(t('save'))}</button>
+    </div>
+  `;
+
+  // 清除密码按钮
+  $('#wd-clear')?.addEventListener('click', async () => {
+    if (!(await confirmDialog(
+      LANG==='zh'?'确认清除密码？':'Clear password?',
+      LANG==='zh'?'清除后，下次保存时需要重新输入密码才能保护 WebDAV。':'After clearing, you must set a new password on the next save to protect WebDAV.'
+    ))) return;
+    await api('/api/admin/settings', {
+      method: 'PUT',
+      body: JSON.stringify({ webdav_password: '__clear__' }),
+    });
+    toast(LANG==='zh'?'密码已清除':'Password cleared', 'ok');
+    loadWebDAV();
+  });
+
+  // 保存按钮
+  $('#wd-save')?.addEventListener('click', async () => {
+    const body = {
+      webdav_enabled: $('#wd-enable').checked,
+      webdav_username: $('#wd-username').value.trim(),
+      webdav_root_path: $('#wd-root').value.trim(),
+      webdav_password: $('#wd-password').value ? $('#wd-password').value : '__keep__',
+    };
+    await api('/api/admin/settings', { method:'PUT', body: JSON.stringify(body) });
+    toast(t('saved'));
+    loadWebDAV();
+  });
+}
+
 /* ═══════════ 设置 ═══════════ */
 async function loadSettings(){
   const [s, twofaStatus, dbStatus] = await Promise.all([
@@ -2729,9 +2844,9 @@ async function loadSettings(){
       <div class="row" style="flex-direction:column;align-items:stretch;gap:10px">
         <div class="info" style="margin-bottom:4px"><div class="t">🔒 ${esc(t('ipWhitelist'))}</div><div class="d">${esc(t('ipWhitelistD'))}</div></div>
         <textarea id="st-adminips" rows="3" style="width:100%;padding:10px 12px;border-radius:12px;font-size:13px;color:var(--text);background:var(--sf-input);border:1px solid var(--stroke-strong);outline:none;font-family:ui-monospace,'SF Mono',monospace;resize:vertical" placeholder="${esc(t('ipWhitelistPh'))}">${esc(s.admin_ips ?? '')}</textarea>
-        <div class="tip" style="margin-top:4px">
-          ${s.admin_ips ? `<span style="color:#6ee7b7">${esc(t('ipWhitelistOn'))}</span>` : `<span style="color:#fde68a">${esc(t('ipWhitelistOff'))}</span>`}
-          ${esc(t('ipWhitelistHint'))}
+        <div class="tip" style="margin-top:4px;line-height:1.7">
+          <div>${s.admin_ips ? `<span style="color:#16a34a">${esc(t('ipWhitelistOn'))}</span>` : `<span style="color:#d97706">${esc(t('ipWhitelistOff'))}</span>`}</div>
+          <div>${esc(t('ipWhitelistHint'))}</div>
         </div>
       </div>
     </div>
@@ -2847,35 +2962,6 @@ async function loadSettings(){
       </div>
       <div class="row" style="justify-content:flex-end;margin-top:10px">
         <button class="btn primary" id="oauth-add" style="padding:10px 20px;font-size:13px;border-radius:14px">+ ${esc(t('oauthAddProvider'))}</button>
-      </div>
-    </div>
-    <!-- WebDAV -->
-    <div class="glass group">
-      <div class="row">
-        <div class="info"><div class="t">${esc(t('webdavGroupTitle'))}</div><div class="d">${esc(t('webdavGroupD'))}</div></div>
-        <label class="switch"><input type="checkbox" id="st-webdav-en" ${s.webdav_enabled?'checked':''}><span class="track"><span class="thumb"></span></span></label>
-      </div>
-      <div class="row">
-        <div class="info"><div class="t">${esc(t('webdavUsername'))}</div></div>
-        <input type="text" id="st-webdav-user" value="${esc(s.webdav_username ?? 'webdav')}" style="width:180px">
-      </div>
-      <div class="row">
-        <div class="info">
-          <div class="t">${esc(t('webdavPassword'))}</div>
-          <div class="d" style="color:var(--text-3);font-size:12px">${s.webdav_password_configured ? '<span style="color:#6ee7b7">✓ '+esc(t('webdavPasswordSet'))+'</span>' : '<span style="color:#fda293">⚠ '+esc(t('webdavPasswordUnset'))+'</span>'}</div>
-        </div>
-        <input type="password" id="st-webdav-pwd" value="" placeholder="${esc(t('webdavPasswordPh'))}" style="width:200px">
-      </div>
-      <div class="row">
-        <div class="info">
-          <div class="t">${esc(t('webdavRootPath'))}</div>
-          <div class="d">${esc(t('webdavRootPathHelp'))}</div>
-        </div>
-        <input type="text" id="st-webdav-root" value="${esc(s.webdav_root_path ?? '/')}" style="width:180px">
-      </div>
-      <div class="row" style="flex-direction:column;align-items:stretch;gap:6px">
-        <div class="info"><div class="t">${esc(t('webdavUrl'))}</div><div class="d">${esc(t('webdavUrlHint'))}</div></div>
-        <input readonly value="${esc(window.location.origin)}/webdav${s.webdav_root_path && s.webdav_root_path !== '/' ? esc(s.webdav_root_path) : ''}/" onclick="this.select()" style="width:100%;padding:10px 12px;border-radius:12px;font-family:ui-monospace,'SF Mono',monospace;font-size:13px;color:var(--blue);background:rgba(0,0,0,.3);border:1px solid var(--stroke);outline:none">
       </div>
     </div>
     <!-- 数据库健康 -->
@@ -3005,11 +3091,6 @@ async function loadSettings(){
       home_redirect_market: $('#st-home-market').checked,
       codes_floating_button_enabled: $('#st-codes-float').checked,
       codes_floating_button_position: $('#st-codes-pos').value,
-      // WebDAV
-      webdav_enabled: $('#st-webdav-en').checked,
-      webdav_username: $('#st-webdav-user').value.trim(),
-      webdav_root_path: $('#st-webdav-root').value.trim(),
-      webdav_password: $('#st-webdav-pwd').value ? $('#st-webdav-pwd').value : '__keep__',
     };
     await api('/api/admin/settings', { method:'PUT', body: JSON.stringify(body) });
     toast(t('saved'));
