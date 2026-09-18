@@ -370,6 +370,38 @@ export async function handleAdminApi(
     return json({ ok: true });
   }
 
+  // ── 存储浏览（S3 / R2 bucket 内对象列表） ─────────
+  if (path === "/api/admin/storage/objects" && method === "GET") {
+    const prefix = new URL(req.url).searchParams.get("prefix") ?? "";
+    const marker = new URL(req.url).searchParams.get("marker") ?? undefined;
+    const limit = Math.min(500, parseInt(new URL(req.url).searchParams.get("limit") || "100", 10) || 100);
+    try {
+      const st = await storage(env);
+      const result = await st.list({ prefix, marker, limit });
+      return json({ ok: true, ...result, kind: st.kind });
+    } catch (e: any) {
+      return json({ ok: false, error: msg(req, `列存储对象失败: ${e?.message ?? e}`, `Storage list failed: ${e?.message ?? e}`) }, 500);
+    }
+  }
+
+  // ── 删除存储对象（直接删 bucket 中 key；不碰 DB） ──
+  const stDelMatch = /^\/api\/admin\/storage\/objects$/.exec(path);
+  if (stDelMatch && method === "DELETE") {
+    const body = await readJson<{ keys?: string[]; key?: string }>(req).catch(() => ({} as any));
+    const rawKeys = body.keys ?? (body.key ? [body.key] : []);
+    if (!Array.isArray(rawKeys) || rawKeys.length === 0) return json({ error: msg(req, "缺少 keys", "Missing keys") }, 400);
+    // 安全校验：key 不能为空、不能以 / 开头
+    const keys = rawKeys.filter((k: any) => typeof k === "string" && k.length > 0 && !k.startsWith("/"));
+    if (keys.length === 0) return json({ error: msg(req, "无有效 key", "No valid keys") }, 400);
+    try {
+      const st = await storage(env);
+      await Promise.all(keys.map((k) => st.delete(k).catch(() => {})));
+      return json({ ok: true, deleted: keys.length });
+    } catch (e: any) {
+      return json({ ok: false, error: msg(req, `删除失败: ${e?.message ?? e}`, `Delete failed: ${e?.message ?? e}`) }, 500);
+    }
+  }
+
   // ── 创建分享 ──────────────────────────────────────
   if (path === "/api/admin/shares" && method === "POST") {
     const body = await readJson<{
