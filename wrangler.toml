@@ -1,0 +1,11 @@
+name = "cloud-r2pan"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+admin = "test123"
+
+[[d1_databases]]
+binding = "db"
+database_name = "cloud-r2pan"
+database_id = "local-db"
