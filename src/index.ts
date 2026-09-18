@@ -92,8 +92,8 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
     return Response.redirect(new URL(target, url).toString(), 302);
   }
 
-  // 管理后台页面
-  if (path === "/admin" || path === "/admin/") {
+  // 管理后台页面（/admin/apple 是隐藏的 Apple 玻璃风）
+  if (path === "/admin" || path === "/admin/" || path.startsWith("/admin/apple")) {
     return serveAdminPage();
   }
 

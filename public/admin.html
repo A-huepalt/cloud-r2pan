@@ -1,37 +1,147 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>cloud-r2pan</title>
 <style>
+/* ═══════════════════════════════════════════════════════════
+   默认主题：简洁暗色（无玻璃模糊）
+   ═══════════════════════════════════════════════════════════ */
 :root {
-  /* ── 亮色 Apple 风格（默认） ── */
-  --bg-page: linear-gradient(180deg, #f7f7fb 0%, #f0f1f6 100%);
-  --orb-1: #c7e9ff;
-  --orb-2: #d5c6ff;
-  --orb-3: #fbcfe8;
-  --orb-opacity: 0.22;
+  --bg-page: #0f0f10;
+  --orb-1: transparent; --orb-2: transparent; --orb-3: transparent;
+  --orb-opacity: 0;
 
-  /* 玻璃 / 背景层 */
-  --glass: rgba(255,255,255,.88);
-  --glass-strong: rgba(255,255,255,.95);
-  --stroke: rgba(0,0,0,.08);
-  --stroke-strong: rgba(0,0,0,.16);
+  --glass: #1c1c1f;
+  --glass-strong: #242428;
+  --stroke: rgba(255,255,255,.08);
+  --stroke-strong: rgba(255,255,255,.14);
 
-  /* 文字 */
-  --text: #111113;
-  --text-2: rgba(0,0,0,.62);
-  --text-3: rgba(0,0,0,.38);
+  --text: #f0f0f2;
+  --text-2: rgba(255,255,255,.58);
+  --text-3: rgba(255,255,255,.34);
 
-  /* 语义层：半透明表面 */
+  --sf-soft: rgba(255,255,255,.04);
+  --sf: rgba(255,255,255,.055);
+  --sf-strong: rgba(255,255,255,.09);
+  --sf-input: rgba(255,255,255,.07);
+  --sf-input-focus: rgba(255,255,255,.11);
+
+  --shadow-soft: 0 2px 8px rgba(0,0,0,.4);
+  --shadow-topbar: 0 2px 6px rgba(0,0,0,.4);
+  --shadow-inset-hi: none;
+  --shadow-glass: 0 1px 3px rgba(0,0,0,.5);
+  --shadow-topbar-box: 0 1px 3px rgba(0,0,0,.5);
+  --shadow-modal: 0 10px 40px rgba(0,0,0,.5);
+  --shadow-btn-primary: 0 2px 6px rgba(10,124,255,.3);
+  --shadow-btn-danger: 0 2px 6px rgba(255,69,58,.18);
+  --shadow-btn-plain: 0 1px 0 rgba(0,0,0,.5);
+  --shadow-btn-plain-hover: 0 1px 4px rgba(0,0,0,.5);
+  --shadow-spinner-track: rgba(255,255,255,.12);
+  --shadow-switch-thumb: 0 1px 3px rgba(0,0,0,.5);
+  --shadow-toast: 0 6px 20px rgba(0,0,0,.6);
+  --shadow-logo: none;
+
+  --scrollbar-thumb: rgba(255,255,255,.12);
+  --track-bg: rgba(255,255,255,.1);
+  --bar-bg: rgba(255,255,255,.1);
+  --tbl-divider: rgba(255,255,255,.06);
+  --tbl-hover: rgba(255,255,255,.05);
+  --tbl-row-border: rgba(255,255,255,.07);
+  --dashed-border: rgba(255,255,255,.22);
+  --dropzone-bg: rgba(255,255,255,.025);
+  --dropzone-hover-bg: rgba(255,255,255,.06);
+  --dashed-border-strong: rgba(255,255,255,.45);
+  --btn-hover-bg: rgba(255,255,255,.1);
+  --btn-danger-bg: rgba(255,69,58,.1);
+  --btn-danger-bg-hover: rgba(255,69,58,.18);
+  --btn-danger-bg-active: rgba(255,69,58,.26);
+  --btn-danger-border: rgba(255,69,58,.28);
+  --btn-danger-color: #ffb3ae;
+  --radius: 18px;
+  --blue: #0a84ff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   简洁亮色
+   ═══════════════════════════════════════════════════════════ */
+:root[data-theme="light"] {
+  --bg-page: #f5f5f7;
+  --orb-1: transparent; --orb-2: transparent; --orb-3: transparent;
+  --orb-opacity: 0;
+
+  --glass: #ffffff;
+  --glass-strong: #ffffff;
+  --stroke: rgba(0,0,0,.07);
+  --stroke-strong: rgba(0,0,0,.14);
+
+  --text: #1d1d1f;
+  --text-2: rgba(0,0,0,.58);
+  --text-3: rgba(0,0,0,.35);
+
   --sf-soft: rgba(0,0,0,.04);
   --sf: rgba(0,0,0,.055);
   --sf-strong: rgba(0,0,0,.09);
   --sf-input: rgba(0,0,0,.05);
   --sf-input-focus: rgba(0,0,0,.08);
 
-  /* 阴影 */
+  --shadow-soft: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-topbar: 0 1px 2px rgba(0,0,0,.08);
+  --shadow-inset-hi: none;
+  --shadow-glass: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-topbar-box: 0 1px 2px rgba(0,0,0,.08);
+  --shadow-modal: 0 10px 40px rgba(0,0,0,.12);
+  --shadow-btn-primary: 0 2px 6px rgba(10,124,255,.25);
+  --shadow-btn-danger: 0 2px 6px rgba(255,69,58,.12);
+  --shadow-btn-plain: 0 1px 0 rgba(0,0,0,.08);
+  --shadow-btn-plain-hover: 0 1px 4px rgba(0,0,0,.08);
+  --shadow-spinner-track: rgba(0,0,0,.1);
+  --shadow-switch-thumb: 0 1px 3px rgba(0,0,0,.2);
+  --shadow-toast: 0 6px 20px rgba(0,0,0,.12);
+  --shadow-logo: none;
+
+  --scrollbar-thumb: rgba(0,0,0,.12);
+  --track-bg: rgba(0,0,0,.12);
+  --bar-bg: rgba(0,0,0,.1);
+  --tbl-divider: rgba(0,0,0,.06);
+  --tbl-hover: rgba(0,0,0,.04);
+  --tbl-row-border: rgba(0,0,0,.07);
+  --dashed-border: rgba(0,0,0,.22);
+  --dropzone-bg: rgba(0,0,0,.025);
+  --dropzone-hover-bg: rgba(0,0,0,.05);
+  --dashed-border-strong: rgba(0,0,0,.45);
+  --btn-hover-bg: #ffffff;
+  --btn-danger-bg: rgba(255,59,48,.08);
+  --btn-danger-bg-hover: rgba(255,59,48,.14);
+  --btn-danger-bg-active: rgba(255,59,48,.2);
+  --btn-danger-border: rgba(255,59,48,.22);
+  --btn-danger-color: #d70015;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Apple 亮色玻璃风（隐藏，需访问 /admin/apple 启用）
+   ═══════════════════════════════════════════════════════════ */
+:root[data-theme="apple"] {
+  --bg-page: linear-gradient(180deg, #f7f7fb 0%, #f0f1f6 100%);
+  --orb-1: #c7e9ff; --orb-2: #d5c6ff; --orb-3: #fbcfe8;
+  --orb-opacity: 0.22;
+
+  --glass: rgba(255,255,255,.88);
+  --glass-strong: rgba(255,255,255,.95);
+  --stroke: rgba(0,0,0,.08);
+  --stroke-strong: rgba(0,0,0,.16);
+
+  --text: #111113;
+  --text-2: rgba(0,0,0,.62);
+  --text-3: rgba(0,0,0,.38);
+
+  --sf-soft: rgba(0,0,0,.04);
+  --sf: rgba(0,0,0,.055);
+  --sf-strong: rgba(0,0,0,.09);
+  --sf-input: rgba(0,0,0,.05);
+  --sf-input-focus: rgba(0,0,0,.08);
+
   --shadow-soft: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04);
   --shadow-topbar: 0 2px 12px rgba(0,0,0,.05);
   --shadow-inset-hi: inset 0 1px 0 rgba(255,255,255,.9);
@@ -47,7 +157,6 @@
   --shadow-toast: 0 10px 30px rgba(0,0,0,.12);
   --shadow-logo: inset 0 1px 0 rgba(255,255,255,.5), 0 4px 12px rgba(59,130,246,.35);
 
-  /* 其它 */
   --scrollbar-thumb: rgba(0,0,0,.12);
   --track-bg: rgba(0,0,0,.12);
   --bar-bg: rgba(0,0,0,.1);
@@ -65,15 +174,14 @@
   --btn-danger-border: rgba(255,59,48,.22);
   --btn-danger-color: #d70015;
   --radius: 24px;
-  --blue: #0a84ff;
 }
 
-/* ── 暗色主题（data-theme="dark" 时启用） ── */
-:root[data-theme="dark"] {
+/* ═══════════════════════════════════════════════════════════
+   Apple 暗色玻璃风（隐藏）
+   ═══════════════════════════════════════════════════════════ */
+:root[data-theme="apple-dark"] {
   --bg-page: linear-gradient(165deg, #0b1026 0%, #151238 42%, #26104a 100%);
-  --orb-1: #22d3ee;
-  --orb-2: #7c5cf6;
-  --orb-3: #ec4899;
+  --orb-1: #22d3ee; --orb-2: #7c5cf6; --orb-3: #ec4899;
   --orb-opacity: 0.45;
 
   --glass: rgba(255,255,255,.09);
@@ -149,23 +257,33 @@ body {
 /* ── 玻璃卡片 ─────────────────────────── */
 .glass {
   background: var(--glass);
-  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
-  border: 0.5px solid rgba(0,0,0,.08);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 1px solid var(--stroke);
   border-radius: var(--radius);
   box-shadow: var(--shadow-glass);
 }
-:root[data-theme="dark"] .glass { border: 1px solid var(--stroke-strong); }
+:root[data-theme="apple"] .glass,
+:root[data-theme="apple-dark"] .glass {
+  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 0.5px solid rgba(0,0,0,.08);
+}
+:root[data-theme="apple-dark"] .glass { border: 1px solid var(--stroke-strong); }
 
 /* ── 顶栏 ─────────────────────────────── */
 .topbar {
   position: sticky; top: 12px; z-index: 50; margin-bottom: 22px;
   display: flex; align-items: center; gap: 12px; padding: 12px 18px;
   background: var(--glass-strong);
-  backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 0.5px solid rgba(0,0,0,.08); border-radius: 22px;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 1px solid var(--stroke); border-radius: 22px;
   box-shadow: var(--shadow-topbar-box);
 }
-:root[data-theme="dark"] .topbar { border: 1px solid var(--stroke-strong); box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25); }
+:root[data-theme="apple"] .topbar,
+:root[data-theme="apple-dark"] .topbar {
+  backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 0.5px solid rgba(0,0,0,.08);
+}
+:root[data-theme="apple-dark"] .topbar { border: 1px solid var(--stroke-strong); box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25); }
 .logo { width: 38px; height: 38px; border-radius: 12px; flex: none;
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(150deg, #67e8f9, #3b82f6 55%, #8b5cf6);
@@ -190,13 +308,18 @@ body {
 .sidebar {
   flex: none; width: 188px; padding: 14px 10px;
   background: var(--glass);
-  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
-  border: 0.5px solid rgba(0,0,0,.08); border-radius: 22px;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 1px solid var(--stroke); border-radius: 22px;
   box-shadow: var(--shadow-glass);
   display: flex; flex-direction: column; gap: 4px; position: sticky; top: 90px;
   max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin;
 }
-:root[data-theme="dark"] .sidebar { border: 1px solid var(--stroke-strong); box-shadow: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22); }
+:root[data-theme="apple"] .sidebar,
+:root[data-theme="apple-dark"] .sidebar {
+  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 0.5px solid rgba(0,0,0,.08);
+}
+:root[data-theme="apple-dark"] .sidebar { border: 1px solid var(--stroke-strong); box-shadow: 0 16px 44px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22); }
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 .sb-main {
@@ -353,25 +476,28 @@ body {
 /* ── iOS 分组设置列表 ─────────────────── */
 .group {
   border-radius: 20px; overflow: hidden; margin-bottom: 16px;
-  background: #ffffff;
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+:root[data-theme="apple"] .group,
+:root[data-theme="apple-dark"] .group {
   border: 0.5px solid rgba(0,0,0,.08);
-  box-shadow: 0 1px 2px rgba(0,0,0,.04);
   backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
-:root[data-theme="dark"] .group {
+:root[data-theme="apple-dark"] .group {
   background: linear-gradient(150deg, rgba(255,255,255,.1), rgba(255,255,255,.045));
   border: 1px solid var(--stroke-strong);
   box-shadow: var(--shadow-glass);
 }
 .group .row {
   display: flex; align-items: center; gap: 12px; padding: 14px 18px;
-  border-bottom: 0.5px solid rgba(0,0,0,.06); background: transparent;
+  border-bottom: 1px solid var(--tbl-row-border); background: transparent;
   transition: background .15s;
 }
 .group .row:last-child { border-bottom: none; }
-.group .row:hover { background: rgba(0,0,0,.025); }
-:root[data-theme="dark"] .group .row { border-bottom-color: rgba(255,255,255,.07); }
-:root[data-theme="dark"] .group .row:hover { background: rgba(255,255,255,.05); }
+.group .row:hover { background: var(--tbl-hover); }
 .group .row .info { flex: 1; min-width: 0; }
 .group .row .info .t { font-size: 14.5px; font-weight: 600; }
 .group .row .info .d { margin-top: 3px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
@@ -401,19 +527,21 @@ body {
   width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto;
   padding: 26px; border-radius: 32px 32px 0 0;
   background: var(--glass-strong);
-  backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 0.5px solid rgba(0,0,0,.08); border-bottom: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 1px solid var(--stroke); border-bottom: none;
   box-shadow: var(--shadow-modal);
   animation: sheetUp .4s cubic-bezier(.22,1.1,.36,1) both;
 }
-@media (min-width: 640px) { .modal { border-radius: 32px; border-bottom: 0.5px solid rgba(0,0,0,.08); } }
-:root[data-theme="dark"] {
-  @media (min-width: 640px) { .modal { border-bottom-color: var(--stroke-strong); } }
+@media (min-width: 640px) { .modal { border-radius: 32px; border-bottom: 1px solid var(--stroke); } }
+:root[data-theme="apple"] .modal,
+:root[data-theme="apple-dark"] .modal {
+  backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 0.5px solid rgba(0,0,0,.08);
 }
+:root[data-theme="apple-dark"] .modal { border: 1px solid var(--stroke-strong); box-shadow: 0 -20px 60px rgba(0,0,0,.5), var(--shadow-inset-hi); }
+@media (min-width: 640px) { :root[data-theme="apple-dark"] .modal { border-bottom-color: var(--stroke-strong); } }
 
-/* 暗色模态框/toast 边框恢复 */
-:root[data-theme="dark"] .modal { border: 1px solid var(--stroke-strong); box-shadow: 0 -20px 60px rgba(0,0,0,.5), var(--shadow-inset-hi); }
-:root[data-theme="dark"] .toast { border: 1px solid var(--stroke-strong); box-shadow: 0 12px 32px rgba(0,0,0,.45); }
+:root[data-theme="apple-dark"] .toast { border: 1px solid var(--stroke-strong); box-shadow: 0 12px 32px rgba(0,0,0,.45); }
 
 @keyframes sheetUp { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -431,9 +559,15 @@ body {
   display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
 .toast {
   padding: 11px 22px; border-radius: 16px; font-size: 14px; font-weight: 600; color: var(--text);
-  background: var(--glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 0.5px solid rgba(0,0,0,.08); box-shadow: var(--shadow-toast);
+  background: var(--glass-strong);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 1px solid var(--stroke); box-shadow: var(--shadow-toast);
   animation: toastIn .35s cubic-bezier(.22,1.2,.36,1) both; max-width: 86vw; text-align: center;
+}
+:root[data-theme="apple"] .toast,
+:root[data-theme="apple-dark"] .toast {
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(0,0,0,.08);
 }
 .toast.ok { border-color: rgba(52,211,153,.5); }
 .toast.err { border-color: rgba(255,69,58,.55); }
@@ -1462,9 +1596,18 @@ async function showApp(){
   try{
     const s = await api('/api/admin/session');
     siteTitle = s.site_title || siteTitle;
-    // 根据后端偏好设置主题（默认 light）
-    document.documentElement.dataset.theme = s.ui_theme === 'dark' ? 'dark' : 'light';
-  }catch{}
+    // 隐藏路由：访问 /admin/apple 强制 Apple 玻璃风格（暗色紫蓝渐变）
+    const path = location.pathname;
+    if (/\/admin\/apple(\/|$)/.test(path)) {
+      document.documentElement.dataset.theme = 'apple-dark';
+    } else {
+      // 根据后端偏好设置主题（默认 dark）
+      document.documentElement.dataset.theme = s.ui_theme === 'light' ? 'light' : 'dark';
+    }
+  }catch{
+    // 兜底
+    document.documentElement.dataset.theme = location.pathname.includes('/admin/apple') ? 'apple-dark' : 'dark';
+  }
   document.title = t('docTitle', {site: siteTitle});
 
   // 渲染侧边栏
@@ -1496,6 +1639,7 @@ async function showApp(){
         <span class="bar"><i id="pill-bar" style="width:0%"></i></span>
         <span id="pill-text">— / —</span>
       </div>
+      <button class="btn sm" id="theme-toggle" title="🌙 / ☀️" style="font-size:16px;padding:9px 11px;line-height:1">${document.documentElement.dataset.theme === 'light' ? '🌙' : '☀️'}</button>
       <button class="btn sm" id="lang-btn">${esc(t('switchTo'))}</button>
       <button class="btn sm" id="logout-btn">${esc(t('logout'))}</button>
     </div>
@@ -1530,6 +1674,15 @@ async function showApp(){
   $('#logout-btn').onclick = async () => { await api('/api/admin/logout', {method:'POST'}); showLogin(); };
   $('#traffic-pill').onclick = () => switchTab('settings');
   $('#lang-btn').onclick = toggleLang;
+  $('#theme-toggle').onclick = async () => {
+    // Apple 主题下（隐藏路由）不允许切换
+    const currentTheme = document.documentElement.dataset.theme;
+    if (currentTheme === 'apple' || currentTheme === 'apple-dark') return;
+    const next = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    $('#theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
+    try { await api('/api/admin/settings', { method:'PUT', body: JSON.stringify({ ui_theme: next }) }); } catch {}
+  };
   switchTab('overview');
 }
 
@@ -2769,31 +2922,6 @@ async function loadSettings(){
     api('/api/admin/db/status').catch(() => null),
   ]);
   $('#view').innerHTML = `
-    <!-- 主题选择器 -->
-    <div class="glass group">
-      <div class="row" style="align-items:flex-start">
-        <div class="info" style="flex:1">
-          <div class="t">${esc(t('uiThemeTitle'))}</div>
-          <div class="d" style="font-size:12px;line-height:1.6;margin-top:2px">${esc(t('uiThemeD'))}</div>
-        </div>
-      </div>
-      <div class="row" style="border:none;padding-top:8px">
-        <label style="flex:1;cursor:pointer">
-          <input type="radio" name="ui-theme" value="light" ${(s.ui_theme||'light')==='light'?'checked':''} style="display:none">
-          <div style="padding:14px;border-radius:14px;border:1px solid ${(s.ui_theme||'light')==='light'?'var(--blue)':'var(--stroke-strong)'};background:${(s.ui_theme||'light')==='light'?'rgba(10,132,255,.08)':'var(--sf)'};transition:all .18s;text-align:center">
-            <div style="font-size:22px">☀️</div>
-            <div style="font-weight:600;margin-top:2px">${esc(t('uiThemeLight'))}</div>
-          </div>
-        </label>
-        <label style="flex:1;cursor:pointer">
-          <input type="radio" name="ui-theme" value="dark" ${(s.ui_theme||'light')==='dark'?'checked':''} style="display:none">
-          <div style="padding:14px;border-radius:14px;border:1px solid ${(s.ui_theme||'light')==='dark'?'var(--blue)':'var(--stroke-strong)'};background:${(s.ui_theme||'light')==='dark'?'rgba(10,132,255,.08)':'var(--sf)'};transition:all .18s;text-align:center">
-            <div style="font-size:22px">🌙</div>
-            <div style="font-weight:600;margin-top:2px">${esc(t('uiThemeDark'))}</div>
-          </div>
-        </label>
-      </div>
-    </div>
     <div class="glass group">
       <div class="row">
         <div class="info"><div class="t">${esc(t('siteName'))}</div><div class="d">${esc(t('siteNameD'))}</div></div>
@@ -3012,23 +3140,6 @@ async function loadSettings(){
       </div>
     </div>
     <button class="btn primary" id="st-save" style="padding:14px 28px;font-size:15px;border-radius:18px">${esc(t('save'))}</button>`;
-
-  // ── UI 主题切换（实时生效 + 持久化） ──
-  document.querySelectorAll('input[name="ui-theme"]').forEach(radio => {
-    radio.addEventListener('change', async () => {
-      const theme = radio.value;
-      // 立即生效
-      document.documentElement.dataset.theme = theme;
-      try {
-        await api('/api/admin/settings', {
-          method: 'PUT',
-          body: JSON.stringify({ ui_theme: theme }),
-        });
-      } catch {}
-      // 重新 loadSettings 来更新选中状态高亮
-      loadSettings();
-    });
-  });
 
   // ── 数据库工具按钮 ──
   $('#db-refresh')?.addEventListener('click', () => loadSettings());
