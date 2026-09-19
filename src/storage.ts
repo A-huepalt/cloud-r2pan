@@ -28,6 +28,24 @@ export interface StoragePutResult {
   etag?: string;
 }
 
+/** list 返回的条目，与 S3 ListObjectsV2 / R2 list() 对齐 */
+export interface StorageListEntry {
+  key: string;           // 完整对象 key（如 "photos/vacation.jpg"）
+  name: string;          // 显示名（prefix 之后的部分；顶层就是 key）
+  size: number;          // 字节数
+  lastModified: number;  // Unix 毫秒时间戳
+  /** true = "目录"（R2/S3 中是 CommonPrefix，key 以 / 结尾），false = 实际文件 */
+  isDir: boolean;
+}
+
+export interface StorageListResult {
+  entries: StorageListEntry[];
+  /** 是否还有下一页，用于继续翻页 */
+  truncated: boolean;
+  /** 下一页 marker，直接透传给下一次 list() */
+  nextMarker?: string;
+}
+
 export interface StorageProvider {
   kind: "r2" | "s3";
   /** 上传对象（body 可以是 ReadableStream 或 ArrayBuffer） */
@@ -42,6 +60,8 @@ export interface StorageProvider {
   delete(key: string): Promise<void>;
   /** 获取对象元数据（不含 body） */
   head(key: string): Promise<{ size: number; contentType: string } | null>;
+  /** 列出对象（模拟目录浏览；prefix 为 "" 时列根目录） */
+  list(opts: { prefix?: string; marker?: string; limit?: number }): Promise<StorageListResult>;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -81,6 +101,30 @@ export function createR2Provider(r2: R2Bucket): StorageProvider {
       const obj = await r2.head(key);
       if (!obj) return null;
       return { size: obj.size, contentType: obj.httpMetadata?.contentType ?? "application/octet-stream" };
+    },
+    async list(opts) {
+      const prefix = opts.prefix ?? "";
+      const limit = opts.limit ?? 100;
+      const params: any = { prefix, limit, delimiter: "/" };
+      if (opts.marker) params.cursor = opts.marker;
+      const result: any = await r2.list(params);
+      const entries: StorageListEntry[] = [];
+      for (const dir of result.delimitedPrefixes ?? []) {
+        // dir 形如 "photos/"
+        const name = prefix ? dir.slice(prefix.length) : dir;
+        entries.push({ key: dir, name, size: 0, lastModified: 0, isDir: true });
+      }
+      for (const obj of result.objects ?? []) {
+        const name = prefix && obj.key.startsWith(prefix) ? obj.key.slice(prefix.length) : obj.key;
+        entries.push({
+          key: obj.key,
+          name,
+          size: obj.size,
+          lastModified: obj.uploaded ? new Date(obj.uploaded).getTime() : 0,
+          isDir: false,
+        });
+      }
+      return { entries, truncated: !!result.truncated, nextMarker: result.truncated ? result.cursor : undefined };
     },
   };
 }
@@ -168,6 +212,54 @@ async function sha256Hex(data: string): Promise<string> {
 
 function bufToHex(buf: ArrayBuffer): string {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * 极简 XML 解析器 —— 专用于 S3 ListObjectsV2 返回
+ * 不做通用解析，只提取 ListBucketResult 下的 Contents + CommonPrefixes + IsTruncated + NextContinuationToken
+ */
+function parseS3ListXml(xml: string, prefix: string): StorageListResult {
+  const entries: StorageListEntry[] = [];
+
+  // 提取 CommonPrefixes（目录）
+  const cpRe = /<CommonPrefixes>[\s\S]*?<Prefix>([^<]*?)<\/Prefix>[\s\S]*?<\/CommonPrefixes>/g;
+  let m: RegExpExecArray | null;
+  while ((m = cpRe.exec(xml)) !== null) {
+    const dirKey = m[1]; // 形如 "photos/"
+    const name = prefix && dirKey.startsWith(prefix) ? dirKey.slice(prefix.length) : dirKey;
+    entries.push({ key: dirKey, name, size: 0, lastModified: 0, isDir: true });
+  }
+
+  // 提取 Contents（文件）
+  const ctRe = /<Contents>([\s\S]*?)<\/Contents>/g;
+  while ((m = ctRe.exec(xml)) !== null) {
+    const block = m[1];
+    const keyMatch = block.match(/<Key>([^<]*?)<\/Key>/);
+    const sizeMatch = block.match(/<Size>(\d+)<\/Size>/);
+    const lmMatch = block.match(/<LastModified>([^<]*?)<\/LastModified>/);
+    if (!keyMatch) continue;
+    const key = keyMatch[1];
+    const name = prefix && key.startsWith(prefix) ? key.slice(prefix.length) : key;
+    const size = sizeMatch ? parseInt(sizeMatch[1]!, 10) : 0;
+    let lastModified = 0;
+    if (lmMatch) {
+      const t = Date.parse(lmMatch[1]);
+      if (!Number.isNaN(t)) lastModified = t;
+    }
+    entries.push({ key, name, size, lastModified, isDir: false });
+  }
+
+  // IsTruncated
+  const truncMatch = xml.match(/<IsTruncated>(true|false)<\/IsTruncated>/);
+  const truncated = truncMatch?.[1] === "true";
+  // NextContinuationToken（ListObjectsV2 分页 marker）
+  const nctMatch = xml.match(/<NextContinuationToken>([^<]*?)<\/NextContinuationToken>/);
+
+  return {
+    entries,
+    truncated,
+    nextMarker: truncated && nctMatch ? nctMatch[1] : undefined,
+  };
 }
 
 /** AWS Signature V4 签名派生 */
@@ -350,6 +442,25 @@ export function createS3Provider(cfg: S3Config): StorageProvider {
         size,
         contentType: resp.headers.get("Content-Type") || "application/octet-stream",
       };
+    },
+    async list(opts) {
+      const prefix = opts.prefix ?? "";
+      const limit = opts.limit ?? 100;
+      const query = new URLSearchParams();
+      query.set("list-type", "2");
+      query.set("delimiter", "/");
+      query.set("max-keys", String(limit));
+      if (prefix) query.set("prefix", prefix);
+      if (opts.marker) query.set("start-after", opts.marker);
+
+      // ListObjectsV2 是对 bucket 本身发 GET，key 为空串
+      const resp = await doFetch("GET", "", { query });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => resp.statusText);
+        throw new Error(`S3 LIST failed: ${resp.status} ${text}`);
+      }
+      const xmlText = await resp.text();
+      return parseS3ListXml(xmlText, prefix);
     },
   };
 }
