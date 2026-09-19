@@ -2012,7 +2012,7 @@ function openDirectModal(fileId){
 let _stgPrefix = '';
 let _stgMarker = undefined;
 async function loadStorage(){
-  const isZh = I18N_CURRENT === 'zh';
+  const isZh = LANG === "zh";
   const $ = (id) => document.getElementById(id);
   const view = $('#view');
 
